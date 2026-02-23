@@ -143,7 +143,8 @@ After bootstrap, run these commands from your AOSP tree root.
 
 - Connection snapshots from `/proc/net/*` when available on-device
 - Persistent block rules (stored across reboots)
-- Rule enforcement through a local VPN service
+- Rule enforcement through system backend (iptables) when available
+- Automatic fallback to VPN enforcement when system backend is unavailable
 - Boot-time restart when protection was previously enabled
 - Severity colors per connection:
   - Green (low), Orange (medium), Red (high)
@@ -166,8 +167,9 @@ Usage:
 
 Security note:
 
-- This template enforces destination blocking by routing selected destinations
-  into the local VPN interface and dropping captured packets.
+- System backend mode uses iptables-based rules from a privileged app context.
+- VPN fallback mode enforces blocking by routing selected destinations into the
+  local VPN interface and dropping captured packets.
 
 ## Built-in AdGuard DNS quick toggles
 

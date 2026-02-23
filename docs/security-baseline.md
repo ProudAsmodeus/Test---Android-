@@ -121,9 +121,10 @@ This template also includes a built-in app:
 - `AdGuardControl` (`packages/apps/AdGuardControl`)
 
 It provides persistent destination rules and on-device enforcement through a
-local VPN service, plus connection visibility via kernel socket table snapshots
-where available. This is intended as a practical user-facing control layer on
-top of the release pipeline hardening checks above.
+system backend (iptables) when available, with fallback to a local VPN service,
+plus connection visibility via kernel socket table snapshots where available.
+This is intended as a practical user-facing control layer on top of the release
+pipeline hardening checks above.
 
 Additional app-side protections include:
 

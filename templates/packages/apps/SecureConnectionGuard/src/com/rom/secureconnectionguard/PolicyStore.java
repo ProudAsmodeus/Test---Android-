@@ -11,11 +11,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 final class PolicyStore {
+    static final String BACKEND_SYSTEM = "system";
+    static final String BACKEND_VPN = "vpn";
+    static final String BACKEND_NONE = "none";
+
     private static final String PREF_NAME = "secure_connection_guard";
     private static final String KEY_RULES = "rules";
     private static final String KEY_CONNECTIONS = "connections";
     private static final String KEY_PROTECTION_ENABLED = "protection_enabled";
     private static final String KEY_BLOCK_SUSPICIOUS = "block_suspicious";
+    private static final String KEY_SYSTEM_BACKEND_ENABLED = "system_backend_enabled";
+    private static final String KEY_LAST_ACTIVE_BACKEND = "last_active_backend";
     private static final int MAX_CONNECTION_HISTORY = 300;
 
     private static final Set<Integer> SUSPICIOUS_PORTS = new HashSet<>();
@@ -93,6 +99,23 @@ final class PolicyStore {
 
     synchronized void setBlockSuspiciousEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_BLOCK_SUSPICIOUS, enabled).apply();
+    }
+
+    synchronized boolean isSystemBackendEnabled() {
+        return prefs.getBoolean(KEY_SYSTEM_BACKEND_ENABLED, true);
+    }
+
+    synchronized void setSystemBackendEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_SYSTEM_BACKEND_ENABLED, enabled).apply();
+    }
+
+    synchronized String getLastActiveBackend() {
+        return prefs.getString(KEY_LAST_ACTIVE_BACKEND, BACKEND_NONE);
+    }
+
+    synchronized void setLastActiveBackend(String backend) {
+        String normalized = backend == null ? BACKEND_NONE : backend;
+        prefs.edit().putString(KEY_LAST_ACTIVE_BACKEND, normalized).apply();
     }
 
     synchronized void addConnection(ConnectionRecord record) {

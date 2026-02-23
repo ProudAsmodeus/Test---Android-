@@ -14,6 +14,7 @@ import android.os.ParcelFileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,10 @@ public final class ConnectionFirewallService extends VpnService {
     private ParcelFileDescriptor vpnInterface;
     private PolicyStore policyStore;
     private ProcNetScanner procNetScanner;
+    private SystemFirewallBackend systemFirewallBackend;
     private final Map<Integer, String> uidToPackageCache = new HashMap<>();
+    private final Map<String, Long> systemSeenConnections = new HashMap<>();
+    private boolean usingSystemBackend;
 
     static Intent buildStartIntent(Context context) {
         Intent intent = new Intent(context, ConnectionFirewallService.class);
@@ -49,6 +53,7 @@ public final class ConnectionFirewallService extends VpnService {
         super.onCreate();
         policyStore = new PolicyStore(this);
         procNetScanner = new ProcNetScanner();
+        systemFirewallBackend = new SystemFirewallBackend();
     }
 
     @Override
@@ -56,6 +61,7 @@ public final class ConnectionFirewallService extends VpnService {
         String action = intent != null ? intent.getAction() : ACTION_START;
         if (ACTION_STOP.equals(action)) {
             policyStore.setProtectionEnabled(false);
+            policyStore.setLastActiveBackend(PolicyStore.BACKEND_NONE);
             stopProtection();
             stopForeground(Service.STOP_FOREGROUND_REMOVE);
             stopSelf();
@@ -80,29 +86,26 @@ public final class ConnectionFirewallService extends VpnService {
                 return;
             }
 
-            Builder builder = new Builder();
-            builder.setSession("Secure Connection Guard");
-            builder.setMtu(1500);
-            builder.addAddress("10.33.0.1", 32);
-
-            List<FirewallRule> rules = policyStore.getRules();
-            if (rules.isEmpty()) {
-                // Keep VPN viable while minimizing routing impact when no explicit rule exists.
-                builder.addRoute("203.0.113.255", 32);
-            } else {
-                for (FirewallRule rule : rules) {
-                    builder.addRoute(rule.targetIp, rule.prefixLength);
+            boolean preferSystemBackend = policyStore.isSystemBackendEnabled();
+            if (preferSystemBackend && systemFirewallBackend.isAvailable()) {
+                List<FirewallRule> rules = policyStore.getRules();
+                if (systemFirewallBackend.enable(rules)) {
+                    usingSystemBackend = true;
+                    running = true;
+                    policyStore.setLastActiveBackend(PolicyStore.BACKEND_SYSTEM);
+                    workerThread = new Thread(this::systemMonitorLoop, "SecureConnectionGuardSystemMonitor");
+                    workerThread.start();
+                    return;
                 }
             }
 
-            vpnInterface = builder.establish();
-            if (vpnInterface == null) {
-                return;
+            usingSystemBackend = false;
+            boolean vpnOk = startVpnProtectionLocked();
+            if (vpnOk) {
+                policyStore.setLastActiveBackend(PolicyStore.BACKEND_VPN);
+            } else {
+                policyStore.setLastActiveBackend(PolicyStore.BACKEND_NONE);
             }
-
-            running = true;
-            workerThread = new Thread(this::captureLoop, "SecureConnectionGuardCapture");
-            workerThread.start();
         }
     }
 
@@ -115,6 +118,12 @@ public final class ConnectionFirewallService extends VpnService {
                 workerThread = null;
             }
 
+            if (usingSystemBackend) {
+                systemFirewallBackend.disable();
+                usingSystemBackend = false;
+                systemSeenConnections.clear();
+            }
+
             if (vpnInterface != null) {
                 try {
                     vpnInterface.close();
@@ -122,6 +131,96 @@ public final class ConnectionFirewallService extends VpnService {
                     // Ignore close errors during shutdown.
                 }
                 vpnInterface = null;
+            }
+        }
+    }
+
+    private boolean startVpnProtectionLocked() {
+        Builder builder = new Builder();
+        builder.setSession("Secure Connection Guard");
+        builder.setMtu(1500);
+        builder.addAddress("10.33.0.1", 32);
+
+        List<FirewallRule> rules = policyStore.getRules();
+        if (rules.isEmpty()) {
+            // Keep VPN viable while minimizing routing impact when no explicit rule exists.
+            builder.addRoute("203.0.113.255", 32);
+        } else {
+            for (FirewallRule rule : rules) {
+                builder.addRoute(rule.targetIp, rule.prefixLength);
+            }
+        }
+
+        vpnInterface = builder.establish();
+        if (vpnInterface == null) {
+            return false;
+        }
+
+        running = true;
+        workerThread = new Thread(this::captureLoop, "SecureConnectionGuardCapture");
+        workerThread.start();
+        return true;
+    }
+
+    private void systemMonitorLoop() {
+        while (running) {
+            long now = System.currentTimeMillis();
+            List<ProcNetScanner.ActiveConnection> activeConnections = procNetScanner.scanConnections();
+            for (ProcNetScanner.ActiveConnection conn : activeConnections) {
+                String key = conn.protocol + "|" + conn.destinationIp + "|" + conn.destinationPort + "|" + conn.uid;
+                Long lastSeen = systemSeenConnections.get(key);
+                if (lastSeen != null && now - lastSeen < 15000L) {
+                    continue;
+                }
+                systemSeenConnections.put(key, now);
+
+                String sourceApp = resolveSourceApp(conn.uid);
+                ConnectionRecord base = new ConnectionRecord(
+                        now,
+                        conn.destinationIp,
+                        conn.destinationPort,
+                        conn.protocol,
+                        false,
+                        conn.state,
+                        conn.uid,
+                        sourceApp,
+                        "",
+                        ""
+                );
+                boolean blocked = policyStore.shouldBlock(base);
+                String reason = blocked ? policyStore.blockReason(base) : conn.state;
+                ConnectionRecord record = new ConnectionRecord(
+                        base.timestampMs,
+                        base.destinationIp,
+                        base.destinationPort,
+                        base.protocol,
+                        blocked,
+                        reason,
+                        base.sourceUid,
+                        base.sourceApp,
+                        base.countryCode,
+                        base.countryName
+                );
+                policyStore.addConnection(record);
+            }
+
+            trimSystemSeenMap(now);
+
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    private void trimSystemSeenMap(long now) {
+        Iterator<Map.Entry<String, Long>> iterator = systemSeenConnections.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Long> entry = iterator.next();
+            if (now - entry.getValue() > 60000L) {
+                iterator.remove();
             }
         }
     }

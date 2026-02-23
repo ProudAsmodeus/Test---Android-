@@ -31,6 +31,7 @@ public final class MainActivity extends Activity {
     private TextView newsStatusView;
     private Switch protectionSwitch;
     private Switch blockSuspiciousSwitch;
+    private Switch systemBackendSwitch;
     private EditText ruleInput;
     private ListView rulesList;
     private ListView connectionsList;
@@ -70,6 +71,7 @@ public final class MainActivity extends Activity {
         newsStatusView = findViewById(R.id.news_status_text);
         protectionSwitch = findViewById(R.id.protection_switch);
         blockSuspiciousSwitch = findViewById(R.id.block_suspicious_switch);
+        systemBackendSwitch = findViewById(R.id.system_backend_switch);
         ruleInput = findViewById(R.id.rule_input);
         rulesList = findViewById(R.id.rules_list);
         connectionsList = findViewById(R.id.connections_list);
@@ -165,6 +167,7 @@ public final class MainActivity extends Activity {
     private void refreshUiFromStore() {
         boolean protectionEnabled = policyStore.isProtectionEnabled();
         boolean blockSuspiciousEnabled = policyStore.isBlockSuspiciousEnabled();
+        boolean systemBackendEnabled = policyStore.isSystemBackendEnabled();
 
         if (!listenersAttached) {
             protectionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -173,7 +176,11 @@ public final class MainActivity extends Activity {
                 }
                 policyStore.setProtectionEnabled(isChecked);
                 if (isChecked) {
-                    requestVpnAndStart();
+                    if (policyStore.isSystemBackendEnabled()) {
+                        startProtectionService();
+                    } else {
+                        requestVpnAndStart();
+                    }
                 } else {
                     stopProtectionService();
                 }
@@ -188,12 +195,22 @@ public final class MainActivity extends Activity {
                 restartProtectionIfEnabled();
             });
 
+            systemBackendSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (suppressSwitchCallbacks) {
+                    return;
+                }
+                policyStore.setSystemBackendEnabled(isChecked);
+                restartProtectionIfEnabled();
+                updateStatus();
+            });
+
             listenersAttached = true;
         }
 
         suppressSwitchCallbacks = true;
         protectionSwitch.setChecked(protectionEnabled);
         blockSuspiciousSwitch.setChecked(blockSuspiciousEnabled);
+        systemBackendSwitch.setChecked(systemBackendEnabled);
         suppressSwitchCallbacks = false;
         updateStatus();
         refreshRulesList();
@@ -218,7 +235,22 @@ public final class MainActivity extends Activity {
         String status = policyStore.isProtectionEnabled()
                 ? getString(R.string.status_protection_on)
                 : getString(R.string.status_protection_off);
-        statusView.setText(getString(R.string.status_prefix) + status);
+        String backendValue = policyStore.getLastActiveBackend();
+        String backend;
+        if (!policyStore.isProtectionEnabled()) {
+            backend = getString(R.string.status_backend_inactive);
+        } else if (PolicyStore.BACKEND_SYSTEM.equals(backendValue)) {
+            backend = getString(R.string.status_backend_system);
+        } else if (PolicyStore.BACKEND_VPN.equals(backendValue)) {
+            backend = getString(R.string.status_backend_vpn);
+        } else {
+            backend = policyStore.isSystemBackendEnabled()
+                    ? getString(R.string.status_backend_system)
+                    : getString(R.string.status_backend_vpn);
+        }
+        statusView.setText(
+                getString(R.string.status_prefix) + status + "\n"
+                        + getString(R.string.status_backend_prefix) + backend);
     }
 
     private void addRuleFromInput() {
@@ -414,6 +446,10 @@ public final class MainActivity extends Activity {
     }
 
     private void requestVpnAndStart() {
+        if (policyStore.isSystemBackendEnabled()) {
+            startProtectionService();
+            return;
+        }
         Intent vpnIntent = VpnService.prepare(this);
         if (vpnIntent != null) {
             startActivityForResult(vpnIntent, REQUEST_VPN_PERMISSION);

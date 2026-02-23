@@ -7,7 +7,8 @@ Built-in ROM security app for connection oversight and rule enforcement.
 - Lists recent connection entries captured by the guard service
 - Attempts active socket snapshot listing from `/proc/net/*`
 - Stores destination block rules persistently (SharedPreferences)
-- Enforces destination rules via local VPN routing + packet drop
+- Enforces destination rules via system backend (iptables) when available
+- Falls back to local VPN routing + packet drop when system backend is unavailable
 - Restores protection on boot if previously enabled
 - Colors each detected connection by severity:
   - Green: low risk
@@ -26,3 +27,5 @@ Built-in ROM security app for connection oversight and rule enforcement.
 - The app is intended as an on-device control plane for defensive blocking.
 - It complements (not replaces) release-time security controls in
   `scripts/security/*`.
+- System backend success depends on device policy/SELinux allowing iptables
+  commands from the privileged app context.
