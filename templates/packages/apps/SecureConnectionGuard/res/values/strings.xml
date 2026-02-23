@@ -38,6 +38,7 @@
     <string name="news_refresh_running">Refreshing security news...</string>
     <string name="news_refresh_failed">Could not refresh security news right now.</string>
     <string name="news_refresh_ok">Security news updated.</string>
+    <string name="news_link_blocked">Blocked opening non-http news link.</string>
     <string name="severity_low">LOW</string>
     <string name="severity_medium">MEDIUM</string>
     <string name="severity_high">HIGH</string>

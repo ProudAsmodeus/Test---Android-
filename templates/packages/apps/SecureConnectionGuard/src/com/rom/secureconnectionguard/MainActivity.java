@@ -129,6 +129,10 @@ public final class MainActivity extends Activity {
             if (item == null || item.link == null || item.link.isEmpty()) {
                 return;
             }
+            if (!isSafeHttpUrl(item.link)) {
+                Toast.makeText(this, R.string.news_link_blocked, Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 Intent open = new Intent(Intent.ACTION_VIEW, Uri.parse(item.link));
                 startActivity(open);
@@ -361,6 +365,20 @@ public final class MainActivity extends Activity {
             }
         }, "SecureConnectionGuardUiRefresh");
         worker.start();
+    }
+
+    private boolean isSafeHttpUrl(String value) {
+        try {
+            Uri uri = Uri.parse(value);
+            String scheme = uri.getScheme();
+            if (scheme == null) {
+                return false;
+            }
+            String normalized = scheme.toLowerCase(java.util.Locale.US);
+            return "http".equals(normalized) || "https".equals(normalized);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private ConnectionUiItem toUiItem(ConnectionRecord record) {

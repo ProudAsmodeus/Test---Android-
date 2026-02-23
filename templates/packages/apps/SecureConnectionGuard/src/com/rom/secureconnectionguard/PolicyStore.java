@@ -180,6 +180,15 @@ final class PolicyStore {
         return "";
     }
 
+    static int[] suspiciousPortsArray() {
+        int[] values = new int[SUSPICIOUS_PORTS.size()];
+        int i = 0;
+        for (Integer port : SUSPICIOUS_PORTS) {
+            values[i++] = port.intValue();
+        }
+        return values;
+    }
+
     private boolean isSuspicious(ConnectionRecord record) {
         if (record == null) {
             return false;

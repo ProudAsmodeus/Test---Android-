@@ -13,7 +13,7 @@ final class SystemFirewallBackend {
         return runShell("iptables -L OUTPUT -n >/dev/null 2>&1", false);
     }
 
-    boolean enable(List<FirewallRule> rules) {
+    boolean enable(List<FirewallRule> rules, boolean blockSuspiciousPorts) {
         if (!isAvailable()) {
             return false;
         }
@@ -33,6 +33,14 @@ final class SystemFirewallBackend {
                 }
                 String destination = rule.displayValue();
                 ok &= runShell("iptables -A " + CHAIN_NAME + " -d " + destination + " -j REJECT", false);
+            }
+        }
+
+        if (blockSuspiciousPorts) {
+            int[] suspiciousPorts = PolicyStore.suspiciousPortsArray();
+            for (int port : suspiciousPorts) {
+                ok &= runShell("iptables -A " + CHAIN_NAME + " -p tcp --dport " + port + " -j REJECT", false);
+                ok &= runShell("iptables -A " + CHAIN_NAME + " -p udp --dport " + port + " -j REJECT", false);
             }
         }
 

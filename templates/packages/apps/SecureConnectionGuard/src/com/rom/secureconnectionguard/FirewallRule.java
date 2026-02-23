@@ -118,6 +118,49 @@ final class FirewallRule {
         return true;
     }
 
+    static boolean isPrivateOrReservedIpv4(String ip) {
+        if (!isValidIpv4(ip)) {
+            return true;
+        }
+        String[] parts = ip.split("\\.");
+        int a = Integer.parseInt(parts[0]);
+        int b = Integer.parseInt(parts[1]);
+
+        // 0.0.0.0/8
+        if (a == 0) {
+            return true;
+        }
+        // 10.0.0.0/8
+        if (a == 10) {
+            return true;
+        }
+        // 100.64.0.0/10 (carrier-grade NAT)
+        if (a == 100 && b >= 64 && b <= 127) {
+            return true;
+        }
+        // 127.0.0.0/8 (loopback)
+        if (a == 127) {
+            return true;
+        }
+        // 169.254.0.0/16 (link-local)
+        if (a == 169 && b == 254) {
+            return true;
+        }
+        // 172.16.0.0/12
+        if (a == 172 && b >= 16 && b <= 31) {
+            return true;
+        }
+        // 192.168.0.0/16
+        if (a == 192 && b == 168) {
+            return true;
+        }
+        // 224.0.0.0/4 multicast and 240.0.0.0/4 reserved
+        if (a >= 224) {
+            return true;
+        }
+        return false;
+    }
+
     private static long ipv4ToLong(String ip) {
         String[] parts = ip.split("\\.");
         long result = 0;

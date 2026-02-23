@@ -45,6 +45,9 @@ final class GeoIpResolver {
     }
 
     synchronized CountryInfo resolve(String ip) {
+        if (FirewallRule.isPrivateOrReservedIpv4(ip)) {
+            return new CountryInfo("", "");
+        }
         long now = System.currentTimeMillis();
         CacheEntry cached = cache.get(ip);
         if (cached != null && now - cached.timestampMs <= CACHE_TTL_MS) {
@@ -65,7 +68,7 @@ final class GeoIpResolver {
     }
 
     private CountryInfo fetchCountryInfo(String ip) {
-        if (!FirewallRule.isValidIpv4(ip)) {
+        if (!FirewallRule.isValidIpv4(ip) || FirewallRule.isPrivateOrReservedIpv4(ip)) {
             return new CountryInfo("", "");
         }
         HttpURLConnection conn = null;
