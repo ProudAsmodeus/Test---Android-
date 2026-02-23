@@ -19,4 +19,20 @@
 
   <remote name="github"
           fetch="https://github.com/" />
+
+  <!-- Motorola Edge 70 project examples -->
+  <!--
+  <project name="YourOrg/android_device_motorola_edge70"
+           path="device/motorola/edge70"
+           remote="github"
+           revision="main" />
+  <project name="YourOrg/android_kernel_motorola_edge70"
+           path="kernel/motorola/edge70"
+           remote="github"
+           revision="main" />
+  <project name="YourOrg/proprietary_vendor_motorola_edge70"
+           path="vendor/motorola/edge70"
+           remote="github"
+           revision="main" />
+  -->
 </manifest>

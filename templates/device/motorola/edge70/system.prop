@@ -1,0 +1,5 @@
+# Motorola Edge 70 (12GB/512GB) placeholder properties
+ro.product.vendor.brand=motorola
+ro.product.vendor.device=edge70
+ro.product.vendor.model=Motorola Edge 70
+ro.vendor.rom.variant=12GB_512GB
