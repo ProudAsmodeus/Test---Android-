@@ -88,8 +88,14 @@ copy_template_file "${REPO_ROOT}/scripts/security/check_kernel_hardening_config.
 copy_template_file "${REPO_ROOT}/scripts/security/kernel_hardening_required.config" "scripts/security/kernel_hardening_required.config"
 chmod +x scripts/security/*.sh
 
+echo "Copying quality and feature-readiness scripts..."
+copy_template_file "${REPO_ROOT}/scripts/qa/validate_feature_readiness.sh" "scripts/qa/validate_feature_readiness.sh"
+copy_template_file "${REPO_ROOT}/scripts/qa/run_device_acceptance_suite.sh" "scripts/qa/run_device_acceptance_suite.sh"
+chmod +x scripts/qa/*.sh
+
 echo "Copying security baseline documentation..."
 copy_template_file "${REPO_ROOT}/docs/security-baseline.md" "docs/security-baseline.md"
+copy_template_file "${REPO_ROOT}/docs/feature-readiness.md" "docs/feature-readiness.md"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"
@@ -137,5 +143,9 @@ Next steps:
   7) (Optional) Audit kernel hardening config:
      bash scripts/security/check_kernel_hardening_config.sh \
        /path/to/kernel/.config
+  8) Validate source-tree feature readiness before release:
+     bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
+  9) Run on-device acceptance checks (after flashing build):
+     bash scripts/qa/run_device_acceptance_suite.sh
 
 EOF

@@ -113,6 +113,9 @@ Further hardening beyond this scaffold should include dedicated kernel hardening
 SELinux policy tightening, memory allocator hardening work, and exploit
 mitigation backports where applicable.
 
+For core telephony/camera/eSIM/5G production readiness alongside security,
+follow `docs/feature-readiness.md` and the `scripts/qa/*` gates.
+
 ## On-device firewall controls
 
 This template also includes a built-in app:

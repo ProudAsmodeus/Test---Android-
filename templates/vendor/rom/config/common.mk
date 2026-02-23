@@ -7,6 +7,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.rom.base=true
 
 $(call inherit-product, vendor/rom/config/security_hardening.mk)
+$(call inherit-product, vendor/rom/config/optimization.mk)
 
 PRODUCT_PACKAGES += \
     SecureConnectionGuard \
