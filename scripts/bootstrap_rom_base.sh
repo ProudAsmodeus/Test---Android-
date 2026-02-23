@@ -84,7 +84,7 @@ Next steps:
      repo sync -c -j\$(nproc)
   3) Build:
      source build/envsetup.sh
-     lunch aosp_edge70-userdebug
+     lunch aosp_edge70_eu-userdebug
      m -j\$(nproc)
 
 EOF
