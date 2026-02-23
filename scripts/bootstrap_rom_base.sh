@@ -55,7 +55,7 @@ echo "Copying ROM vendor base..."
 mkdir -p vendor/rom
 cp -R "${REPO_ROOT}/templates/vendor/rom/." vendor/rom/
 
-echo "Copying Motorola Edge 70 (12GB/512GB) skeleton..."
+echo "Copying Motorola Edge 70 XT2601-2 EU skeleton..."
 copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70" "device/motorola/edge70"
 copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70" "vendor/motorola/edge70"
 
@@ -84,7 +84,7 @@ Next steps:
      repo sync -c -j\$(nproc)
   3) Build:
      source build/envsetup.sh
-     lunch aosp_edge70_eu-userdebug
+     lunch aosp_xt2601_2_eu-userdebug
      m -j\$(nproc)
 
 EOF

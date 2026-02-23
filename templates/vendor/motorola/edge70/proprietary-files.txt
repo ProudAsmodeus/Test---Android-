@@ -1,4 +1,4 @@
-# Motorola Edge 70 (12GB/512GB) proprietary blobs
+# Motorola Edge 70 (XT2601-2) proprietary blobs
 #
 # Replace this placeholder list with real files from stock firmware.
 # Example entries:

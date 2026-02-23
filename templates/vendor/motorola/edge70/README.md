@@ -1,7 +1,7 @@
 # Vendor blobs placeholder - Motorola Edge 70
 
 This directory is a placeholder for proprietary vendor blobs for Motorola Edge
-70 (12GB/512GB variant).
+70 (XT2601-2 / 12GB-512GB target variant).
 
 ## Expected workflow
 

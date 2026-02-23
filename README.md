@@ -9,10 +9,10 @@ of the newest AOSP release branch.
   `android-latest-release` (default)
 - A local manifest template for adding your device/kernel/vendor repos
 - Base ROM product + config makefiles under `vendor/rom`
-- Motorola Edge 70 (12GB/512GB) starter skeleton:
+- Motorola Edge 70 XT2601-2 starter skeleton:
   - `device/motorola/edge70`
   - `vendor/motorola/edge70`
-  - Includes `aosp_edge70_eu` lunch target
+  - Includes `aosp_xt2601_2_eu` lunch target (SKU: `XT2601-2`)
 
 ## Quick start
 
@@ -41,7 +41,7 @@ of the newest AOSP release branch.
 
    ```bash
    source build/envsetup.sh
-   lunch aosp_edge70_eu-userdebug
+   lunch aosp_xt2601_2_eu-userdebug
    m -j$(nproc)
    ```
 
@@ -53,6 +53,6 @@ of the newest AOSP release branch.
 - Replace or extend `vendor/rom` configs to match your ROM branding/features.
 - Update placeholder values in `device/motorola/edge70/BoardConfig.mk` before
   attempting a full device bring-up.
-- GTIN `0840493606774` is stored as a reference input from your side, but you
-  should still confirm the exact Motorola hardware ID (e.g. `XTxxxx-*`) in
-  fastboot/stock firmware before finalizing kernel and radio configs.
+- GTIN `0840493606774` and product code `XT2601-2` are stored as reference
+  inputs. Confirm additional hardware identifiers from stock firmware before
+  finalizing kernel and modem/radio config.
