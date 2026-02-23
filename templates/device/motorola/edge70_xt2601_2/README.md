@@ -34,3 +34,5 @@ Reference identifiers:
   `RELEASE_GATE_MODE=presign scripts/security/release_gate.sh <product_out> <unsigned_target_files.zip> <keys_dir>`
 - Audit kernel baseline:
   `scripts/security/check_kernel_hardening_config.sh /path/to/kernel/.config`
+- Include user-facing enforcement controls via:
+  `packages/apps/SecureConnectionGuard`

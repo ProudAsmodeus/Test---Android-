@@ -112,3 +112,14 @@ inside your AOSP tree under `scripts/security/`.
 Further hardening beyond this scaffold should include dedicated kernel hardening,
 SELinux policy tightening, memory allocator hardening work, and exploit
 mitigation backports where applicable.
+
+## On-device firewall controls
+
+This template also includes a built-in app:
+
+- `SecureConnectionGuard` (`packages/apps/SecureConnectionGuard`)
+
+It provides persistent destination rules and on-device enforcement through a
+local VPN service, plus connection visibility via kernel socket table snapshots
+where available. This is intended as a practical user-facing control layer on
+top of the release pipeline hardening checks above.

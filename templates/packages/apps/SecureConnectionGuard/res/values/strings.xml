@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Secure Connection Guard</string>
+    <string name="protection_enabled">Enable protection</string>
+    <string name="block_suspicious_enabled">Block suspicious destinations automatically</string>
+    <string name="blocked_rules_label">Blocked destination rules (IPv4 or CIDR)</string>
+    <string name="rule_input_hint">Example: 198.51.100.42 or 203.0.113.0/24</string>
+    <string name="add_rule">Add rule</string>
+    <string name="refresh_connections">Refresh connections</string>
+    <string name="captured_connections_label">Recent connections</string>
+    <string name="status_prefix">Status: </string>
+    <string name="status_protection_on">Protection ON</string>
+    <string name="status_protection_off">Protection OFF</string>
+    <string name="notification_title">Secure Connection Guard active</string>
+    <string name="notification_text">Monitoring and enforcing connection rules.</string>
+    <string name="invalid_rule">Invalid rule. Use IPv4 or CIDR format.</string>
+    <string name="rule_already_exists">Rule already exists.</string>
+    <string name="rule_added">Rule added.</string>
+    <string name="rule_removed">Rule removed.</string>
+    <string name="vpn_permission_required">VPN permission is required to enforce rules.</string>
+    <string name="service_started">Protection started.</string>
+    <string name="service_stopped">Protection stopped.</string>
+    <string name="connections_refresh_failed">Unable to read system connection table on this build.</string>
+    <string name="add_from_connection">Long press a connection to block its destination.</string>
+</resources>

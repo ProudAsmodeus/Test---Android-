@@ -20,6 +20,8 @@ of the newest AOSP release branch.
   - `scripts/security/release_gate.sh`
   - `scripts/security/package_secure_ota.sh`
   - `scripts/security/check_kernel_hardening_config.sh`
+- Built-in security app:
+  - `packages/apps/SecureConnectionGuard`
 
 ## Quick start
 
@@ -132,3 +134,28 @@ After bootstrap, run these commands from your AOSP tree root.
    bash scripts/security/check_kernel_hardening_config.sh \
      /path/to/kernel/.config
    ```
+
+## Built-in connection firewall app
+
+`Secure Connection Guard` is included in the product build and provides:
+
+- Connection snapshots from `/proc/net/*` when available on-device
+- Persistent block rules (stored across reboots)
+- Rule enforcement through a local VPN service
+- Boot-time restart when protection was previously enabled
+
+Rule format:
+
+- IPv4 host: `198.51.100.42`
+- IPv4 CIDR: `203.0.113.0/24`
+
+Usage:
+
+1. Open **Secure Connection Guard**
+2. Add destination rules and enable protection
+3. Long-press a listed connection to quickly block that destination
+
+Security note:
+
+- This template enforces destination blocking by routing selected destinations
+  into the local VPN interface and dropping captured packets.

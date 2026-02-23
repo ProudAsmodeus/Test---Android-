@@ -1,0 +1,256 @@
+package com.rom.secureconnectionguard;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.net.VpnService;
+import android.os.Build;
+import android.os.ParcelFileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+
+public final class ConnectionFirewallService extends VpnService {
+    static final String ACTION_START = "com.rom.secureconnectionguard.action.START";
+    static final String ACTION_STOP = "com.rom.secureconnectionguard.action.STOP";
+
+    private static final String NOTIFICATION_CHANNEL_ID = "secure_connection_guard";
+    private static final int NOTIFICATION_ID = 47021;
+
+    private final Object vpnLock = new Object();
+    private volatile boolean running;
+    private Thread workerThread;
+    private ParcelFileDescriptor vpnInterface;
+    private PolicyStore policyStore;
+
+    static Intent buildStartIntent(Context context) {
+        Intent intent = new Intent(context, ConnectionFirewallService.class);
+        intent.setAction(ACTION_START);
+        return intent;
+    }
+
+    static Intent buildStopIntent(Context context) {
+        Intent intent = new Intent(context, ConnectionFirewallService.class);
+        intent.setAction(ACTION_STOP);
+        return intent;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        policyStore = new PolicyStore(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String action = intent != null ? intent.getAction() : ACTION_START;
+        if (ACTION_STOP.equals(action)) {
+            policyStore.setProtectionEnabled(false);
+            stopProtection();
+            stopForeground(Service.STOP_FOREGROUND_REMOVE);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
+
+        startForeground(NOTIFICATION_ID, buildNotification());
+        startProtection();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        stopProtection();
+        super.onDestroy();
+    }
+
+    private void startProtection() {
+        synchronized (vpnLock) {
+            if (running) {
+                return;
+            }
+
+            Builder builder = new Builder();
+            builder.setSession("Secure Connection Guard");
+            builder.setMtu(1500);
+            builder.addAddress("10.33.0.1", 32);
+
+            List<FirewallRule> rules = policyStore.getRules();
+            if (rules.isEmpty()) {
+                // Keep VPN viable while minimizing routing impact when no explicit rule exists.
+                builder.addRoute("203.0.113.255", 32);
+            } else {
+                for (FirewallRule rule : rules) {
+                    builder.addRoute(rule.targetIp, rule.prefixLength);
+                }
+            }
+
+            vpnInterface = builder.establish();
+            if (vpnInterface == null) {
+                return;
+            }
+
+            running = true;
+            workerThread = new Thread(this::captureLoop, "SecureConnectionGuardCapture");
+            workerThread.start();
+        }
+    }
+
+    private void stopProtection() {
+        synchronized (vpnLock) {
+            running = false;
+
+            if (workerThread != null) {
+                workerThread.interrupt();
+                workerThread = null;
+            }
+
+            if (vpnInterface != null) {
+                try {
+                    vpnInterface.close();
+                } catch (IOException ignored) {
+                    // Ignore close errors during shutdown.
+                }
+                vpnInterface = null;
+            }
+        }
+    }
+
+    private void captureLoop() {
+        ParcelFileDescriptor currentInterface;
+        synchronized (vpnLock) {
+            currentInterface = vpnInterface;
+        }
+        if (currentInterface == null) {
+            return;
+        }
+
+        try (FileInputStream input = new FileInputStream(currentInterface.getFileDescriptor())) {
+            byte[] packet = new byte[32767];
+            while (running) {
+                int length = input.read(packet);
+                if (length <= 0) {
+                    continue;
+                }
+
+                ParsedPacket parsed = ParsedPacket.fromIpv4(packet, length);
+                if (parsed == null || !FirewallRule.isValidIpv4(parsed.destinationIp)) {
+                    continue;
+                }
+
+                ConnectionRecord tentative = new ConnectionRecord(
+                        System.currentTimeMillis(),
+                        parsed.destinationIp,
+                        parsed.destinationPort,
+                        parsed.protocol,
+                        false,
+                        ""
+                );
+
+                boolean policyBlock = policyStore.shouldBlock(tentative);
+                String reason = policyStore.blockReason(tentative);
+                if (!policyBlock) {
+                    // This template service currently enforces by routing blocked targets into the
+                    // local VPN interface; packets captured here are intentionally dropped.
+                    reason = "Captured by enforcement route";
+                }
+
+                ConnectionRecord finalRecord = new ConnectionRecord(
+                        tentative.timestampMs,
+                        tentative.destinationIp,
+                        tentative.destinationPort,
+                        tentative.protocol,
+                        true,
+                        reason
+                );
+                policyStore.addConnection(finalRecord);
+            }
+        } catch (IOException ignored) {
+            // Expected during interface teardown.
+        }
+    }
+
+    private Notification buildNotification() {
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.app_name),
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            nm.createNotificationChannel(channel);
+        }
+
+        Intent openIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                openIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+                : new Notification.Builder(this);
+
+        return builder
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle(getString(R.string.notification_title))
+                .setContentText(getString(R.string.notification_text))
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .build();
+    }
+
+    private static final class ParsedPacket {
+        final String destinationIp;
+        final int destinationPort;
+        final String protocol;
+
+        ParsedPacket(String destinationIp, int destinationPort, String protocol) {
+            this.destinationIp = destinationIp;
+            this.destinationPort = destinationPort;
+            this.protocol = protocol;
+        }
+
+        static ParsedPacket fromIpv4(byte[] packet, int length) {
+            if (length < 20) {
+                return null;
+            }
+
+            int version = (packet[0] >> 4) & 0x0f;
+            if (version != 4) {
+                return null;
+            }
+
+            int ihl = (packet[0] & 0x0f) * 4;
+            if (ihl < 20 || length < ihl) {
+                return null;
+            }
+
+            int protocolCode = packet[9] & 0xff;
+            String protocol = "OTHER";
+            int port = -1;
+
+            if (protocolCode == 6) {
+                protocol = "TCP";
+            } else if (protocolCode == 17) {
+                protocol = "UDP";
+            }
+
+            if ((protocolCode == 6 || protocolCode == 17) && length >= ihl + 4) {
+                port = ((packet[ihl + 2] & 0xff) << 8) | (packet[ihl + 3] & 0xff);
+            }
+
+            String destinationIp = (packet[16] & 0xff)
+                    + "." + (packet[17] & 0xff)
+                    + "." + (packet[18] & 0xff)
+                    + "." + (packet[19] & 0xff);
+
+            return new ParsedPacket(destinationIp, port, protocol);
+        }
+    }
+}
