@@ -8,6 +8,9 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 
 $(call inherit-product, vendor/rom/config/security_hardening.mk)
 
+PRODUCT_PACKAGES += \
+    SecureConnectionGuard
+
 # Example package hook:
 # PRODUCT_PACKAGES += \
 #     SomeExtraPackage
