@@ -19,6 +19,7 @@ of the newest AOSP release branch.
   - `scripts/security/verify_release_security.sh`
   - `scripts/security/release_gate.sh`
   - `scripts/security/package_secure_ota.sh`
+  - `scripts/security/check_kernel_hardening_config.sh`
 
 ## Quick start
 
@@ -90,11 +91,15 @@ After bootstrap, run these commands from your AOSP tree root.
 3. Block OTA packaging unless release/security checks pass:
 
    ```bash
-   bash scripts/security/release_gate.sh \
+   RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
      out/target/product/edge70_xt2601_2 \
      out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
      /path/to/release-keys
    ```
+
+   Note:
+   - `presign` mode is for unsigned target-files checks
+   - default strict mode is for signed target-files checks
 
    Optional key-set override for branches with fewer key aliases:
 
@@ -120,3 +125,10 @@ After bootstrap, run these commands from your AOSP tree root.
 5. Review detailed policy:
 
    - `docs/security-baseline.md`
+
+6. Optional kernel hardening audit:
+
+   ```bash
+   bash scripts/security/check_kernel_hardening_config.sh \
+     /path/to/kernel/.config
+   ```

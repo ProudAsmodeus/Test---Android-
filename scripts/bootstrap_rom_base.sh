@@ -78,6 +78,8 @@ copy_template_file "${REPO_ROOT}/scripts/security/sync_latest_security_patches.s
 copy_template_file "${REPO_ROOT}/scripts/security/verify_release_security.sh" "scripts/security/verify_release_security.sh"
 copy_template_file "${REPO_ROOT}/scripts/security/release_gate.sh" "scripts/security/release_gate.sh"
 copy_template_file "${REPO_ROOT}/scripts/security/package_secure_ota.sh" "scripts/security/package_secure_ota.sh"
+copy_template_file "${REPO_ROOT}/scripts/security/check_kernel_hardening_config.sh" "scripts/security/check_kernel_hardening_config.sh"
+copy_template_file "${REPO_ROOT}/scripts/security/kernel_hardening_required.config" "scripts/security/kernel_hardening_required.config"
 chmod +x scripts/security/*.sh
 
 echo "Copying security baseline documentation..."
@@ -114,7 +116,7 @@ Next steps:
      bash scripts/security/verify_release_security.sh \
        out/target/product/edge70_xt2601_2
   5) Run release gate before OTA packaging:
-     bash scripts/security/release_gate.sh \
+     RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
        out/target/product/edge70_xt2601_2 \
        out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
        /path/to/release-keys
@@ -125,5 +127,8 @@ Next steps:
        out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
        /path/to/release-keys \
        out/dist/aosp_xt2601_2_eu-ota-signed.zip
+  7) (Optional) Audit kernel hardening config:
+     bash scripts/security/check_kernel_hardening_config.sh \
+       /path/to/kernel/.config
 
 EOF

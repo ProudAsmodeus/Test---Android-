@@ -60,7 +60,8 @@ mkdir -p "$(dirname "${SIGNED_TARGET_FILES}")"
 mkdir -p "$(dirname "${OUTPUT_OTA_ZIP}")"
 
 echo "Running release gate on unsigned target files..."
-bash "${RELEASE_GATE_SCRIPT}" "${PRODUCT_OUT}" "${UNSIGNED_TARGET_FILES}" "${SIGNING_KEYS_DIR}"
+RELEASE_GATE_MODE=presign bash "${RELEASE_GATE_SCRIPT}" \
+  "${PRODUCT_OUT}" "${UNSIGNED_TARGET_FILES}" "${SIGNING_KEYS_DIR}"
 
 echo "Signing target files with release keys..."
 "${SIGN_TARGET_FILES_APKS}" \
@@ -70,7 +71,8 @@ echo "Signing target files with release keys..."
   "${SIGNED_TARGET_FILES}"
 
 echo "Running release gate on signed target files..."
-bash "${RELEASE_GATE_SCRIPT}" "${PRODUCT_OUT}" "${SIGNED_TARGET_FILES}" "${SIGNING_KEYS_DIR}"
+RELEASE_GATE_MODE=strict bash "${RELEASE_GATE_SCRIPT}" \
+  "${PRODUCT_OUT}" "${SIGNED_TARGET_FILES}" "${SIGNING_KEYS_DIR}"
 
 echo "Creating signed OTA package..."
 "${OTA_FROM_TARGET_FILES}" \
