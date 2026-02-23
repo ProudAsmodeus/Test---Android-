@@ -9,6 +9,9 @@ of the newest AOSP release branch.
   `android-latest-release` (default)
 - A local manifest template for adding your device/kernel/vendor repos
 - Base ROM product + config makefiles under `vendor/rom`
+- Motorola Edge 70 (12GB/512GB) starter skeleton:
+  - `device/motorola/edge70`
+  - `vendor/motorola/edge70`
 
 ## Quick start
 
@@ -37,7 +40,7 @@ of the newest AOSP release branch.
 
    ```bash
    source build/envsetup.sh
-   lunch aosp_rom_base-userdebug
+   lunch aosp_edge70-userdebug
    m -j$(nproc)
    ```
 
@@ -47,3 +50,5 @@ of the newest AOSP release branch.
   proprietary blobs for your hardware target.
 - Edit `.repo/local_manifests/rom-base.xml` with your actual repositories.
 - Replace or extend `vendor/rom` configs to match your ROM branding/features.
+- Update placeholder values in `device/motorola/edge70/BoardConfig.mk` before
+  attempting a full device bring-up.

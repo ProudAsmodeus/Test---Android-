@@ -17,6 +17,20 @@ fi
 cd "${TARGET_DIR}"
 echo "Using target source directory: ${TARGET_DIR}"
 
+copy_template_dir() {
+  local source_dir="$1"
+  local target_dir="$2"
+
+  if [[ -d "${target_dir}" ]]; then
+    echo "Existing ${target_dir} detected; leaving current files untouched."
+    return 0
+  fi
+
+  mkdir -p "${target_dir}"
+  cp -R "${source_dir}/." "${target_dir}/"
+  echo "Copied template ${source_dir} -> ${target_dir}"
+}
+
 if ! command -v repo >/dev/null 2>&1; then
   echo "Error: repo tool not found in PATH."
   echo "Install instructions: https://source.android.com/docs/setup/download"
@@ -40,6 +54,10 @@ echo "Copied local manifest template to ${LOCAL_MANIFEST_TARGET}"
 echo "Copying ROM vendor base..."
 mkdir -p vendor/rom
 cp -R "${REPO_ROOT}/templates/vendor/rom/." vendor/rom/
+
+echo "Copying Motorola Edge 70 (12GB/512GB) skeleton..."
+copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70" "device/motorola/edge70"
+copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70" "vendor/motorola/edge70"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"
@@ -66,7 +84,7 @@ Next steps:
      repo sync -c -j\$(nproc)
   3) Build:
      source build/envsetup.sh
-     lunch aosp_rom_base-userdebug
+     lunch aosp_edge70-userdebug
      m -j\$(nproc)
 
 EOF
