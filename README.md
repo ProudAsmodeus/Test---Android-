@@ -9,10 +9,10 @@ of the newest AOSP release branch.
   `android-latest-release` (default)
 - A local manifest template for adding your device/kernel/vendor repos
 - Base ROM product + config makefiles under `vendor/rom`
-- Motorola Edge 70 XT2601-2 **dedicated** starter skeleton:
-  - `device/motorola/edge70_xt2601_2`
-  - `vendor/motorola/edge70_xt2601_2`
-  - Includes `aosp_xt2601_2_eu` lunch target (SKU: `XT2601-2`)
+- Samsung Galaxy A53 5G (`SM-A536B/DS`) **dedicated** starter skeleton:
+  - `device/samsung/a536b_ds`
+  - `vendor/samsung/a536b_ds`
+  - Includes `aosp_a536b_ds` lunch target (SKU: `SM-A536B/DS`)
 - Security baseline tooling:
   - `vendor/rom/config/security_hardening.mk`
   - `vendor/rom/config/optimization.mk`
@@ -25,7 +25,7 @@ of the newest AOSP release branch.
   - `scripts/qa/validate_feature_readiness.sh`
   - `scripts/qa/run_device_acceptance_suite.sh`
 - Camera parity tooling:
-  - `scripts/camera/integrate_moto_camera.sh`
+  - `scripts/camera/integrate_samsung_camera.sh`
   - `docs/camera-stock-parity.md`
 - Built-in security app:
   - `packages/apps/SecureConnectionGuard`
@@ -59,14 +59,14 @@ of the newest AOSP release branch.
 
    ```bash
    source build/envsetup.sh
-   lunch aosp_xt2601_2_eu-user
+   lunch aosp_a536b_ds-user
    m -j$(nproc)
    ```
 
    For bring-up debugging only:
 
    ```bash
-   lunch aosp_xt2601_2_eu-userdebug
+   lunch aosp_a536b_ds-userdebug
    ```
 
 ## Important notes
@@ -76,17 +76,17 @@ of the newest AOSP release branch.
 - Edit `.repo/local_manifests/rom-base.xml` with your actual repositories.
 - Replace or extend `vendor/rom` configs to match your ROM branding/features.
 - Update placeholder values in
-  `device/motorola/edge70_xt2601_2/BoardConfig.mk` before attempting a full
+  `device/samsung/a536b_ds/BoardConfig.mk` before attempting a full
   device bring-up.
-- GTIN `0840493606774` and product code `XT2601-2` are stored as reference
-  inputs. Confirm additional hardware identifiers from stock firmware before
-  finalizing kernel and modem/radio config.
+- Product code `SM-A536B/DS` is stored as a reference input. Confirm additional
+  hardware identifiers from stock firmware before finalizing kernel and
+  modem/radio config.
 - "Smooth, optimized, clean" is addressed with conservative runtime defaults in
   `vendor/rom/config/optimization.mk`.
 - "Everything works" (calls/SMS/5G/eSIM/cameras) must be validated with both:
   - source-tree readiness checks
   - real-device acceptance tests
-- "Motorola-like camera behavior/processing" requires stock camera app +
+- "Samsung-like camera behavior/processing" requires stock camera app +
   matching proprietary camera processing stack from stock firmware.
 
 ## Security update workflow
@@ -103,15 +103,15 @@ After bootstrap, run these commands from your AOSP tree root.
 
    ```bash
    bash scripts/security/verify_release_security.sh \
-     out/target/product/edge70_xt2601_2
+     out/target/product/a536b_ds
    ```
 
 3. Block OTA packaging unless release/security checks pass:
 
    ```bash
    RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys
    ```
 
@@ -124,8 +124,8 @@ After bootstrap, run these commands from your AOSP tree root.
    ```bash
    REQUIRED_KEYS="releasekey,platform,shared,media" \
    bash scripts/security/release_gate.sh \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys
    ```
 
@@ -134,10 +134,10 @@ After bootstrap, run these commands from your AOSP tree root.
    ```bash
    bash scripts/security/package_secure_ota.sh \
      /path/to/aosp/tree \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys \
-     out/dist/aosp_xt2601_2_eu-ota-signed.zip
+     out/dist/aosp_a536b_ds-ota-signed.zip
    ```
 
 5. Review detailed policy:
@@ -168,7 +168,7 @@ After bootstrap, run these commands from your AOSP tree root.
 9. Bootstrap stock camera app + candidate processing blobs:
 
    ```bash
-   bash scripts/camera/integrate_moto_camera.sh /path/to/aosp/tree /path/to/stock_dump
+   bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump
    ```
 
 ## Built-in connection firewall app
@@ -224,12 +224,12 @@ Important note:
 - This integration manages Android Private DNS endpoints for AdGuard free/paid
   DNS modes. It does not redistribute proprietary paid AdGuard binaries.
 
-## Motorola camera parity path
+## Samsung camera parity path
 
-To approach stock Motorola camera behavior/processing:
+To approach stock Samsung camera behavior/processing:
 
 1. Run:
-   `bash scripts/camera/integrate_moto_camera.sh /path/to/aosp/tree /path/to/stock_dump`
+   `bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump`
 2. Verify camera blobs and app packaging with:
    `bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
 3. Flash build and run:

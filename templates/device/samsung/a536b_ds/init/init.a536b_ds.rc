@@ -1,0 +1,4 @@
+# Placeholder init configuration for Samsung Galaxy A53 5G (SM-A536B/DS).
+
+on early-boot
+    setprop ro.a536b_ds.bringup 1

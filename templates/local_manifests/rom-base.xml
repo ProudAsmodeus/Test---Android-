@@ -20,18 +20,18 @@
   <remote name="github"
           fetch="https://github.com/" />
 
-  <!-- Motorola Edge 70 XT2601-2 dedicated project examples -->
+  <!-- Samsung Galaxy A53 5G (SM-A536B/DS) dedicated project examples -->
   <!--
-  <project name="YourOrg/android_device_motorola_edge70_xt2601_2"
-           path="device/motorola/edge70_xt2601_2"
+  <project name="YourOrg/android_device_samsung_a536b_ds"
+           path="device/samsung/a536b_ds"
            remote="github"
            revision="main" />
-  <project name="YourOrg/android_kernel_motorola_edge70_xt2601_2"
-           path="kernel/motorola/edge70_xt2601_2"
+  <project name="YourOrg/android_kernel_samsung_a536b_ds"
+           path="kernel/samsung/a536b_ds"
            remote="github"
            revision="main" />
-  <project name="YourOrg/proprietary_vendor_motorola_edge70_xt2601_2"
-           path="vendor/motorola/edge70_xt2601_2"
+  <project name="YourOrg/proprietary_vendor_samsung_a536b_ds"
+           path="vendor/samsung/a536b_ds"
            remote="github"
            revision="main" />
   -->

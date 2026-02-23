@@ -8,10 +8,10 @@ usage() {
   echo "Usage: $0 <aosp_root> <product_out_path> <unsigned_target_files_zip> <signing_keys_dir> <output_ota_zip>"
   echo "Example:"
   echo "  $0 ~/android/rom \\"
-  echo "     ~/android/rom/out/target/product/edge70_xt2601_2 \\"
-  echo "     ~/android/rom/out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \\"
+  echo "     ~/android/rom/out/target/product/a536b_ds \\"
+  echo "     ~/android/rom/out/dist/aosp_a536b_ds-target_files-unsigned.zip \\"
   echo "     ~/android/keys/release \\"
-  echo "     ~/android/rom/out/dist/aosp_xt2601_2_eu-ota-signed.zip"
+  echo "     ~/android/rom/out/dist/aosp_a536b_ds-ota-signed.zip"
 }
 
 require_file() {

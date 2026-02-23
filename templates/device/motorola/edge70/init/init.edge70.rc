@@ -1,5 +1,0 @@
-# Placeholder init configuration for Motorola Edge 70.
-# Add hardware-specific services and permissions as bring-up progresses.
-
-on early-boot
-    setprop ro.edge70.bringup 1

@@ -16,8 +16,8 @@ failures=0
 usage() {
   echo "Usage: $0 <product_out_path> <target_files_zip> <signing_keys_dir>"
   echo "Example:"
-  echo "  $0 out/target/product/edge70_xt2601_2 \\"
-  echo "     out/dist/aosp_xt2601_2_eu-target_files.zip \\"
+  echo "  $0 out/target/product/a536b_ds \\"
+  echo "     out/dist/aosp_a536b_ds-target_files.zip \\"
   echo "     keys/release"
   echo
   echo "Environment:"

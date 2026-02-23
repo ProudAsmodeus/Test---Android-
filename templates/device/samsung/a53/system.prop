@@ -1,0 +1,6 @@
+# Samsung Galaxy A53 5G (SM-A536B/DS) placeholder properties
+ro.product.vendor.brand=samsung
+ro.product.vendor.device=a53
+ro.product.vendor.model=Samsung Galaxy A53 5G (SM-A536B/DS)
+ro.vendor.device.sku=SM-A536B/DS
+ro.vendor.rom.variant=DUAL_SIM

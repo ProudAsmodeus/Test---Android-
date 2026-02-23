@@ -71,7 +71,7 @@ run_shell_check "Camera intent launches" "am start -W -a android.media.action.ST
 run_shell_check "Multiple camera IDs detected" "dumpsys media.camera" "(Camera ID: 1|Number of camera devices: [2-9])"
 
 if [[ "${REQUIRE_STOCK_CAMERA_PACKAGE}" == "1" ]]; then
-  run_shell_check "Moto stock camera package present" "pm list packages" "(motorola\\.camera|com\\.motorola\\.camera|camera3)"
+  run_shell_check "Samsung stock camera package present" "pm list packages" "(com\\.sec\\.android\\.app\\.camera|sec\\.android\\.app\\.camera|samsung\\.camera)"
 else
   log "INFO: stock camera package check skipped (REQUIRE_STOCK_CAMERA_PACKAGE=0)"
 fi
@@ -92,10 +92,10 @@ log "  [ ] Test rear main camera"
 log "  [ ] Test rear ultrawide/tele/macro cameras (if present)"
 log "  [ ] Test front camera"
 log "  [ ] Test video recording all cameras"
-log "  [ ] Test Motorola camera HDR mode"
-log "  [ ] Test Motorola camera Night mode"
-log "  [ ] Test Motorola camera Portrait mode"
-log "  [ ] Test Motorola camera stabilization quality (EIS/OIS path)"
+log "  [ ] Test Samsung camera HDR mode"
+log "  [ ] Test Samsung camera Night mode"
+log "  [ ] Test Samsung camera Portrait mode"
+log "  [ ] Test Samsung camera stabilization quality (EIS/OIS path)"
 
 if [[ "${failures}" -gt 0 ]]; then
   echo

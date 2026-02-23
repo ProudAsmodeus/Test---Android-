@@ -38,7 +38,7 @@ inside your AOSP tree under `scripts/security/`.
 
    ```bash
    source build/envsetup.sh
-   lunch aosp_xt2601_2_eu-user
+   lunch aosp_a536b_ds-user
    m -j$(nproc)
    ```
 
@@ -46,22 +46,22 @@ inside your AOSP tree under `scripts/security/`.
 
    ```bash
    bash scripts/security/verify_release_security.sh \
-     out/target/product/edge70_xt2601_2
+     out/target/product/a536b_ds
    ```
 
    Optional strictness:
 
    ```bash
    MAX_PATCH_AGE_DAYS=30 bash scripts/security/verify_release_security.sh \
-     out/target/product/edge70_xt2601_2
+     out/target/product/a536b_ds
    ```
 
 4. Run release gate before any OTA packaging:
 
    ```bash
    RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys
    ```
 
@@ -70,8 +70,8 @@ inside your AOSP tree under `scripts/security/`.
    ```bash
    REQUIRED_KEYS="releasekey,platform,shared,media" \
    bash scripts/security/release_gate.sh \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys
    ```
 
@@ -79,8 +79,8 @@ inside your AOSP tree under `scripts/security/`.
 
    ```bash
    bash scripts/security/release_gate.sh \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-signed.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-signed.zip \
      /path/to/release-keys
    ```
 
@@ -89,10 +89,10 @@ inside your AOSP tree under `scripts/security/`.
    ```bash
    bash scripts/security/package_secure_ota.sh \
      /path/to/aosp/tree \
-     out/target/product/edge70_xt2601_2 \
-     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     out/target/product/a536b_ds \
+     out/dist/aosp_a536b_ds-target_files-unsigned.zip \
      /path/to/release-keys \
-     out/dist/aosp_xt2601_2_eu-ota-signed.zip
+     out/dist/aosp_a536b_ds-ota-signed.zip
    ```
 
 6. Audit kernel config hardening baseline:
@@ -116,7 +116,7 @@ mitigation backports where applicable.
 For core telephony/camera/eSIM/5G production readiness alongside security,
 follow `docs/feature-readiness.md` and the `scripts/qa/*` gates.
 
-For stock-quality Motorola camera behavior and processing path, follow
+For stock-quality Samsung camera behavior and processing path, follow
 `docs/camera-stock-parity.md`.
 
 ## On-device firewall controls

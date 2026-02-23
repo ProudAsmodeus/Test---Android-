@@ -1,26 +1,26 @@
-# Stock camera parity guide (XT2601-2)
+# Stock camera parity guide (SM-A536B/DS)
 
-To approach Motorola stock camera behavior and processing quality, use the stock
+To approach Samsung stock camera behavior and processing quality, use the stock
 camera app and proprietary camera processing stack from the same firmware family
 as your target build.
 
 ## 1) Integrate stock camera package and candidate blobs
 
 ```bash
-bash scripts/camera/integrate_moto_camera.sh /path/to/aosp/tree /path/to/stock_dump
+bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump
 ```
 
 This script:
 
-- finds a Motorola camera APK candidate and copies it as:
-  `vendor/motorola/edge70_xt2601_2/camera/prebuilt/MotoCamera.apk`
+- finds a Samsung camera APK candidate and copies it as:
+  `vendor/samsung/a536b_ds/camera/prebuilt/SamsungCamera.apk`
 - appends camera-related candidate blob paths into:
-  `vendor/motorola/edge70_xt2601_2/proprietary-files.txt`
+  `vendor/samsung/a536b_ds/proprietary-files.txt`
 
 ## 2) Ensure camera prebuilt path is active
 
-- `vendor/motorola/edge70_xt2601_2/camera/camera-vendor.mk` should exist
-- `device/motorola/edge70_xt2601_2/device.mk` should include this makefile
+- `vendor/samsung/a536b_ds/camera/camera-vendor.mk` should exist
+- `device/samsung/a536b_ds/device.mk` should include this makefile
 
 ## 3) Validate feature readiness
 

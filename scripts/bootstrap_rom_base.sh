@@ -69,9 +69,9 @@ echo "Copying ROM vendor base..."
 mkdir -p vendor/rom
 cp -R "${REPO_ROOT}/templates/vendor/rom/." vendor/rom/
 
-echo "Copying dedicated Motorola Edge 70 XT2601-2 EU skeleton..."
-copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70_xt2601_2" "device/motorola/edge70_xt2601_2"
-copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70_xt2601_2" "vendor/motorola/edge70_xt2601_2"
+echo "Copying dedicated Samsung Galaxy A53 5G (SM-A536B/DS) skeleton..."
+copy_template_dir "${REPO_ROOT}/templates/device/samsung/a536b_ds" "device/samsung/a536b_ds"
+copy_template_dir "${REPO_ROOT}/templates/vendor/samsung/a536b_ds" "vendor/samsung/a536b_ds"
 
 echo "Copying built-in security firewall app..."
 copy_template_dir "${REPO_ROOT}/templates/packages/apps/SecureConnectionGuard" "packages/apps/SecureConnectionGuard"
@@ -94,7 +94,7 @@ copy_template_file "${REPO_ROOT}/scripts/qa/run_device_acceptance_suite.sh" "scr
 chmod +x scripts/qa/*.sh
 
 echo "Copying camera integration helper scripts..."
-copy_template_file "${REPO_ROOT}/scripts/camera/integrate_moto_camera.sh" "scripts/camera/integrate_moto_camera.sh"
+copy_template_file "${REPO_ROOT}/scripts/camera/integrate_samsung_camera.sh" "scripts/camera/integrate_samsung_camera.sh"
 chmod +x scripts/camera/*.sh
 
 echo "Copying security baseline documentation..."
@@ -127,24 +127,24 @@ Next steps:
      repo sync -c -j\$(nproc)
   3) Build:
      source build/envsetup.sh
-     lunch aosp_xt2601_2_eu-user
+     lunch aosp_a536b_ds-user
      m -j\$(nproc)
      # SecureConnectionGuard and AdGuardControl apps are built into this product.
   4) Verify release security baseline:
      bash scripts/security/verify_release_security.sh \
-       out/target/product/edge70_xt2601_2
+       out/target/product/a536b_ds
   5) Run release gate before OTA packaging:
      RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
-       out/target/product/edge70_xt2601_2 \
-       out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+       out/target/product/a536b_ds \
+       out/dist/aosp_a536b_ds-target_files-unsigned.zip \
        /path/to/release-keys
   6) Package signed OTA via secure wrapper:
      bash scripts/security/package_secure_ota.sh \
        "$(pwd)" \
-       out/target/product/edge70_xt2601_2 \
-       out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+       out/target/product/a536b_ds \
+       out/dist/aosp_a536b_ds-target_files-unsigned.zip \
        /path/to/release-keys \
-       out/dist/aosp_xt2601_2_eu-ota-signed.zip
+       out/dist/aosp_a536b_ds-ota-signed.zip
   7) (Optional) Audit kernel hardening config:
      bash scripts/security/check_kernel_hardening_config.sh \
        /path/to/kernel/.config
@@ -153,6 +153,6 @@ Next steps:
   9) Run on-device acceptance checks (after flashing build):
      bash scripts/qa/run_device_acceptance_suite.sh
   10) Bootstrap stock camera parity path (optional but recommended):
-      bash scripts/camera/integrate_moto_camera.sh "$(pwd)" /path/to/stock_dump
+      bash scripts/camera/integrate_samsung_camera.sh "$(pwd)" /path/to/stock_dump
 
 EOF

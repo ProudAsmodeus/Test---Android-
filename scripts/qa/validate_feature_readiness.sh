@@ -2,8 +2,8 @@
 set -euo pipefail
 
 AOSP_ROOT="${1:-$(pwd)}"
-DEVICE_PATH="${DEVICE_PATH:-device/motorola/edge70_xt2601_2}"
-VENDOR_PATH="${VENDOR_PATH:-vendor/motorola/edge70_xt2601_2}"
+DEVICE_PATH="${DEVICE_PATH:-device/samsung/a536b_ds}"
+VENDOR_PATH="${VENDOR_PATH:-vendor/samsung/a536b_ds}"
 MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
 REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
 
@@ -12,7 +12,7 @@ VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
 BOARD_CONFIG="${DEVICE_DIR}/BoardConfig.mk"
 DEVICE_MK="${DEVICE_DIR}/device.mk"
 SYSTEM_PROP="${DEVICE_DIR}/system.prop"
-INIT_RC="${DEVICE_DIR}/init/init.edge70_xt2601_2.rc"
+INIT_RC="${DEVICE_DIR}/init/init.a536b_ds.rc"
 BLOB_FILE="${VENDOR_DIR}/proprietary-files.txt"
 CAMERA_VENDOR_MK="${VENDOR_DIR}/camera/camera-vendor.mk"
 CAMERA_PREBUILT_DIR="${VENDOR_DIR}/camera/prebuilt"
@@ -106,7 +106,7 @@ if [[ -f "${BLOB_FILE}" ]]; then
   check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa)"
   check_blob_group "camera stack" "(camera|camx|mmcamera)"
   check_blob_group "camera processing stack" "(arcsoft|bokeh|hdr|eis|ois|depth|chi|ais)"
-  check_blob_group "camera app package blobs" "(motorola.*camera|motocamera|camera3)"
+  check_blob_group "camera app package blobs" "(samsung.*camera|sec.*camera|com\.sec\.android\.app\.camera)"
   check_blob_group "audio/voice stack" "(audio|soundtrigger|voice)"
   check_blob_group "wifi/bluetooth stack" "(wlan|wifi|bluetooth|bt)"
 fi
@@ -114,9 +114,9 @@ fi
 if [[ "${REQUIRE_STOCK_CAMERA_APP}" == "1" ]]; then
   camera_apk=""
   for candidate in \
-    "${CAMERA_PREBUILT_DIR}/MotoCamera.apk" \
-    "${CAMERA_PREBUILT_DIR}/MotorolaCamera.apk" \
-    "${CAMERA_PREBUILT_DIR}/com.motorola.camera3.apk"; do
+    "${CAMERA_PREBUILT_DIR}/SamsungCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/SecCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/com.sec.android.app.camera.apk"; do
     if [[ -f "${candidate}" ]]; then
       camera_apk="${candidate}"
       break

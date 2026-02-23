@@ -8,7 +8,7 @@ failures=0
 
 usage() {
   echo "Usage: $0 <product_out_path>"
-  echo "Example: $0 out/target/product/edge70_xt2601_2"
+  echo "Example: $0 out/target/product/a536b_ds"
 }
 
 if [[ -z "${PRODUCT_OUT}" ]]; then
