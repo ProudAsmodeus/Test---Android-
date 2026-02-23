@@ -3,10 +3,13 @@
 This is a starter device tree scaffold for **Motorola Edge 70 (12GB RAM / 512GB
 storage)**.
 
+For a dedicated XT2601-2 layout, prefer:
+`device/motorola/edge70_xt2601_2`.
+
 Reference identifiers provided:
 - GTIN: `0840493606774`
 - Product code: `XT2601-2`
-- EU-targeted build flavors: `aosp_edge70_eu`, `aosp_xt2601_2_eu`
+- EU-targeted build flavor: `aosp_edge70_eu`
 
 ## Current status
 
