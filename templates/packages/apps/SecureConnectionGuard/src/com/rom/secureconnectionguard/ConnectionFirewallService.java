@@ -89,13 +89,17 @@ public final class ConnectionFirewallService extends VpnService {
             boolean preferSystemBackend = policyStore.isSystemBackendEnabled();
             if (preferSystemBackend && systemFirewallBackend.isAvailable()) {
                 List<FirewallRule> rules = policyStore.getRules();
-                if (systemFirewallBackend.enable(rules)) {
+                boolean blockSuspiciousPorts = policyStore.isBlockSuspiciousEnabled();
+                if (systemFirewallBackend.enable(rules, blockSuspiciousPorts)) {
                     usingSystemBackend = true;
                     running = true;
                     policyStore.setLastActiveBackend(PolicyStore.BACKEND_SYSTEM);
                     workerThread = new Thread(this::systemMonitorLoop, "SecureConnectionGuardSystemMonitor");
                     workerThread.start();
                     return;
+                } else {
+                    // Ensure partial iptables state is removed before fallback.
+                    systemFirewallBackend.disable();
                 }
             }
 
