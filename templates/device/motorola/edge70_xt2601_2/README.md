@@ -23,3 +23,10 @@ Reference identifiers:
    `vendor/motorola/edge70_xt2601_2/proprietary-files.txt` and extract blobs
 5. Add SELinux policy, audio/camera/display/radio HAL configuration, and fstab
 6. Confirm modem/radio and camera sub-variant details from stock firmware
+
+## Secure release guidance
+
+- Build release artifacts as `user`, not `userdebug`
+- Keep AVB enabled and signed
+- Run:
+  `scripts/security/verify_release_security.sh out/target/product/edge70_xt2601_2`

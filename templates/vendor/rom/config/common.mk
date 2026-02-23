@@ -6,6 +6,8 @@ PRODUCT_BRAND := Android
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.rom.base=true
 
+$(call inherit-product, vendor/rom/config/security_hardening.mk)
+
 # Example package hook:
 # PRODUCT_PACKAGES += \
 #     SomeExtraPackage
