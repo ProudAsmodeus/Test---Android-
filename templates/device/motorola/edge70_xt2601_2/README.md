@@ -23,6 +23,10 @@ Reference identifiers:
    `vendor/motorola/edge70_xt2601_2/proprietary-files.txt` and extract blobs
 5. Add SELinux policy, audio/camera/display/radio HAL configuration, and fstab
 6. Confirm modem/radio and camera sub-variant details from stock firmware
+7. Pass source-tree readiness gate:
+   `scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
+8. Pass on-device acceptance suite after flashing:
+   `scripts/qa/run_device_acceptance_suite.sh`
 
 ## Secure release guidance
 

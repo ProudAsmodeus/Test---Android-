@@ -15,11 +15,15 @@ of the newest AOSP release branch.
   - Includes `aosp_xt2601_2_eu` lunch target (SKU: `XT2601-2`)
 - Security baseline tooling:
   - `vendor/rom/config/security_hardening.mk`
+  - `vendor/rom/config/optimization.mk`
   - `scripts/security/sync_latest_security_patches.sh`
   - `scripts/security/verify_release_security.sh`
   - `scripts/security/release_gate.sh`
   - `scripts/security/package_secure_ota.sh`
   - `scripts/security/check_kernel_hardening_config.sh`
+- Feature-readiness tooling:
+  - `scripts/qa/validate_feature_readiness.sh`
+  - `scripts/qa/run_device_acceptance_suite.sh`
 - Built-in security app:
   - `packages/apps/SecureConnectionGuard`
 - Built-in DNS control app:
@@ -74,6 +78,11 @@ of the newest AOSP release branch.
 - GTIN `0840493606774` and product code `XT2601-2` are stored as reference
   inputs. Confirm additional hardware identifiers from stock firmware before
   finalizing kernel and modem/radio config.
+- "Smooth, optimized, clean" is addressed with conservative runtime defaults in
+  `vendor/rom/config/optimization.mk`.
+- "Everything works" (calls/SMS/5G/eSIM/cameras) must be validated with both:
+  - source-tree readiness checks
+  - real-device acceptance tests
 
 ## Security update workflow
 
@@ -129,12 +138,25 @@ After bootstrap, run these commands from your AOSP tree root.
 5. Review detailed policy:
 
    - `docs/security-baseline.md`
+   - `docs/feature-readiness.md`
 
 6. Optional kernel hardening audit:
 
    ```bash
    bash scripts/security/check_kernel_hardening_config.sh \
      /path/to/kernel/.config
+   ```
+
+7. Validate source-tree feature completeness:
+
+   ```bash
+   bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+   ```
+
+8. Run real-device acceptance checks after flashing:
+
+   ```bash
+   bash scripts/qa/run_device_acceptance_suite.sh
    ```
 
 ## Built-in connection firewall app
