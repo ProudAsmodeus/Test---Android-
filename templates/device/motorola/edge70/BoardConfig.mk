@@ -7,6 +7,7 @@ TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_VARIANT := generic
 
 # Replace this with the actual SoC platform ID from stock sources/dumps.
+# Applies to both generic and EU product flavors until split is required.
 TARGET_BOARD_PLATFORM := TODO_EDGE70_SOC
 
 # Kernel placeholders; update to your real source/config.
