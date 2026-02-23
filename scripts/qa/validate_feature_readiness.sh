@@ -5,6 +5,7 @@ AOSP_ROOT="${1:-$(pwd)}"
 DEVICE_PATH="${DEVICE_PATH:-device/motorola/edge70_xt2601_2}"
 VENDOR_PATH="${VENDOR_PATH:-vendor/motorola/edge70_xt2601_2}"
 MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
+REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
 
 DEVICE_DIR="${AOSP_ROOT}/${DEVICE_PATH}"
 VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
@@ -13,6 +14,8 @@ DEVICE_MK="${DEVICE_DIR}/device.mk"
 SYSTEM_PROP="${DEVICE_DIR}/system.prop"
 INIT_RC="${DEVICE_DIR}/init/init.edge70_xt2601_2.rc"
 BLOB_FILE="${VENDOR_DIR}/proprietary-files.txt"
+CAMERA_VENDOR_MK="${VENDOR_DIR}/camera/camera-vendor.mk"
+CAMERA_PREBUILT_DIR="${VENDOR_DIR}/camera/prebuilt"
 
 failures=0
 
@@ -70,12 +73,19 @@ require_file "${DEVICE_MK}" "device.mk"
 require_file "${SYSTEM_PROP}" "system.prop"
 require_file "${INIT_RC}" "init rc"
 require_file "${BLOB_FILE}" "proprietary-files"
+require_file "${CAMERA_VENDOR_MK}" "camera-vendor.mk"
 
 if [[ -f "${DEVICE_MK}" ]]; then
   if rg -n "full_base_telephony\.mk" "${DEVICE_MK}" >/dev/null 2>&1; then
     pass "device.mk inherits full_base_telephony"
   else
     fail "device.mk must inherit full_base_telephony for calls/SMS/mobile data"
+  fi
+
+  if rg -n "camera/camera-vendor\.mk" "${DEVICE_MK}" >/dev/null 2>&1; then
+    pass "device.mk includes camera-vendor integration"
+  else
+    fail "device.mk should include vendor camera integration makefile"
   fi
 fi
 
@@ -95,8 +105,29 @@ if [[ -f "${BLOB_FILE}" ]]; then
   check_blob_group "5G/modem support" "(nr|5g|modem)"
   check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa)"
   check_blob_group "camera stack" "(camera|camx|mmcamera)"
+  check_blob_group "camera processing stack" "(arcsoft|bokeh|hdr|eis|ois|depth|chi|ais)"
+  check_blob_group "camera app package blobs" "(motorola.*camera|motocamera|camera3)"
   check_blob_group "audio/voice stack" "(audio|soundtrigger|voice)"
   check_blob_group "wifi/bluetooth stack" "(wlan|wifi|bluetooth|bt)"
+fi
+
+if [[ "${REQUIRE_STOCK_CAMERA_APP}" == "1" ]]; then
+  camera_apk=""
+  for candidate in \
+    "${CAMERA_PREBUILT_DIR}/MotoCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/MotorolaCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/com.motorola.camera3.apk"; do
+    if [[ -f "${candidate}" ]]; then
+      camera_apk="${candidate}"
+      break
+    fi
+  done
+
+  if [[ -n "${camera_apk}" ]]; then
+    pass "stock camera APK present (${camera_apk})"
+  else
+    fail "stock camera APK missing in ${CAMERA_PREBUILT_DIR} (set REQUIRE_STOCK_CAMERA_APP=0 to bypass)"
+  fi
 fi
 
 if [[ "${failures}" -gt 0 ]]; then

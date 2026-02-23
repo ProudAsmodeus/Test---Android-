@@ -68,3 +68,4 @@ Do not treat the ROM as production-ready until:
 1. Security gates pass (`scripts/security/*`)
 2. Source-tree feature gate passes (`scripts/qa/validate_feature_readiness.sh`)
 3. Device acceptance checks pass on real hardware
+4. Camera parity workflow is completed (`docs/camera-stock-parity.md`)

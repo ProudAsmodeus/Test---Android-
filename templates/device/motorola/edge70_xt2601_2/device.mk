@@ -6,6 +6,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, vendor/rom/config/common.mk)
 $(call inherit-product, vendor/rom/config/version.mk)
 
+# Include stock Motorola camera prebuilt when provided.
+-include vendor/motorola/edge70_xt2601_2/camera/camera-vendor.mk
+
 PRODUCT_DEVICE := edge70_xt2601_2
 PRODUCT_NAME := aosp_xt2601_2_eu
 PRODUCT_BRAND := motorola

@@ -24,6 +24,9 @@ of the newest AOSP release branch.
 - Feature-readiness tooling:
   - `scripts/qa/validate_feature_readiness.sh`
   - `scripts/qa/run_device_acceptance_suite.sh`
+- Camera parity tooling:
+  - `scripts/camera/integrate_moto_camera.sh`
+  - `docs/camera-stock-parity.md`
 - Built-in security app:
   - `packages/apps/SecureConnectionGuard`
 - Built-in DNS control app:
@@ -83,6 +86,8 @@ of the newest AOSP release branch.
 - "Everything works" (calls/SMS/5G/eSIM/cameras) must be validated with both:
   - source-tree readiness checks
   - real-device acceptance tests
+- "Motorola-like camera behavior/processing" requires stock camera app +
+  matching proprietary camera processing stack from stock firmware.
 
 ## Security update workflow
 
@@ -139,6 +144,7 @@ After bootstrap, run these commands from your AOSP tree root.
 
    - `docs/security-baseline.md`
    - `docs/feature-readiness.md`
+   - `docs/camera-stock-parity.md`
 
 6. Optional kernel hardening audit:
 
@@ -157,6 +163,12 @@ After bootstrap, run these commands from your AOSP tree root.
 
    ```bash
    bash scripts/qa/run_device_acceptance_suite.sh
+   ```
+
+9. Bootstrap stock camera app + candidate processing blobs:
+
+   ```bash
+   bash scripts/camera/integrate_moto_camera.sh /path/to/aosp/tree /path/to/stock_dump
    ```
 
 ## Built-in connection firewall app
@@ -211,3 +223,19 @@ Important note:
 
 - This integration manages Android Private DNS endpoints for AdGuard free/paid
   DNS modes. It does not redistribute proprietary paid AdGuard binaries.
+
+## Motorola camera parity path
+
+To approach stock Motorola camera behavior/processing:
+
+1. Run:
+   `bash scripts/camera/integrate_moto_camera.sh /path/to/aosp/tree /path/to/stock_dump`
+2. Verify camera blobs and app packaging with:
+   `bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
+3. Flash build and run:
+   `bash scripts/qa/run_device_acceptance_suite.sh`
+4. Complete manual camera mode checks (HDR/Night/Portrait/ultrawide/tele/video)
+
+See:
+
+- `docs/camera-stock-parity.md`
