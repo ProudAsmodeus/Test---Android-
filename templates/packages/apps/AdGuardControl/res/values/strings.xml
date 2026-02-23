@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AdGuard Control</string>
+    <string name="tile_free_label">AdGuard Free</string>
+    <string name="tile_paid_label">AdGuard Paid</string>
+    <string name="tile_subtitle_enabled">Enabled</string>
+    <string name="tile_subtitle_disabled">Disabled</string>
+    <string name="tile_subtitle_needs_setup">Setup required</string>
+    <string name="status_prefix">Current DNS mode: </string>
+    <string name="status_off">Off</string>
+    <string name="status_free">AdGuard Free</string>
+    <string name="status_paid">AdGuard Paid</string>
+    <string name="status_custom">Custom host</string>
+    <string name="configured_paid_endpoint">Configured paid endpoint:</string>
+    <string name="paid_endpoint_hint">example.d.adguard-dns.com</string>
+    <string name="save_paid_endpoint">Save paid endpoint</string>
+    <string name="enable_free">Enable Free</string>
+    <string name="toggle_paid">Toggle Paid</string>
+    <string name="disable_all">Disable DNS filtering</string>
+    <string name="open_adguard_app">Open AdGuard app</string>
+    <string name="open_adguard_site">Open AdGuard website</string>
+    <string name="saved">Saved.</string>
+    <string name="invalid_host">Invalid host format.</string>
+    <string name="paid_endpoint_missing">Set a paid endpoint first.</string>
+    <string name="enable_failed">Could not update private DNS settings.</string>
+    <string name="adguard_app_not_found">AdGuard app is not installed.</string>
+</resources>
