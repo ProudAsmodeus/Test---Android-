@@ -116,6 +116,9 @@ mitigation backports where applicable.
 For core telephony/camera/eSIM/5G production readiness alongside security,
 follow `docs/feature-readiness.md` and the `scripts/qa/*` gates.
 
+For stock-quality Motorola camera behavior and processing path, follow
+`docs/camera-stock-parity.md`.
+
 ## On-device firewall controls
 
 This template also includes a built-in app:

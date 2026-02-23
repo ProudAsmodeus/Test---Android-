@@ -93,9 +93,14 @@ copy_template_file "${REPO_ROOT}/scripts/qa/validate_feature_readiness.sh" "scri
 copy_template_file "${REPO_ROOT}/scripts/qa/run_device_acceptance_suite.sh" "scripts/qa/run_device_acceptance_suite.sh"
 chmod +x scripts/qa/*.sh
 
+echo "Copying camera integration helper scripts..."
+copy_template_file "${REPO_ROOT}/scripts/camera/integrate_moto_camera.sh" "scripts/camera/integrate_moto_camera.sh"
+chmod +x scripts/camera/*.sh
+
 echo "Copying security baseline documentation..."
 copy_template_file "${REPO_ROOT}/docs/security-baseline.md" "docs/security-baseline.md"
 copy_template_file "${REPO_ROOT}/docs/feature-readiness.md" "docs/feature-readiness.md"
+copy_template_file "${REPO_ROOT}/docs/camera-stock-parity.md" "docs/camera-stock-parity.md"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"
@@ -147,5 +152,7 @@ Next steps:
      bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
   9) Run on-device acceptance checks (after flashing build):
      bash scripts/qa/run_device_acceptance_suite.sh
+  10) Bootstrap stock camera parity path (optional but recommended):
+      bash scripts/camera/integrate_moto_camera.sh "$(pwd)" /path/to/stock_dump
 
 EOF

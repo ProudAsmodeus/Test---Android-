@@ -5,6 +5,7 @@ SERIAL="${ANDROID_SERIAL:-${1:-}}"
 REPORT_DIR="${REPORT_DIR:-out/qa}"
 TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REPORT_FILE="${REPORT_DIR}/device-acceptance-${TIMESTAMP}.log"
+REQUIRE_STOCK_CAMERA_PACKAGE="${REQUIRE_STOCK_CAMERA_PACKAGE:-1}"
 failures=0
 
 if ! command -v adb >/dev/null 2>&1; then
@@ -65,6 +66,15 @@ fi
 run_shell_check "Telephony services present" "service list" "(phone|isub|iphonesubinfo|isms)"
 run_shell_check "eSIM service present" "service list" "(euicc|euicc_service)"
 run_shell_check "Camera services present" "service list" "(media\\.camera|cameraproxy)"
+run_shell_check "Camera provider process present" "ps -A" "(camera\\.provider|vendor\\.qti\\.hardware\\.camera|mm-qcamera-daemon)"
+run_shell_check "Camera intent launches" "am start -W -a android.media.action.STILL_IMAGE_CAMERA" "(Status: ok|Complete)"
+run_shell_check "Multiple camera IDs detected" "dumpsys media.camera" "(Camera ID: 1|Number of camera devices: [2-9])"
+
+if [[ "${REQUIRE_STOCK_CAMERA_PACKAGE}" == "1" ]]; then
+  run_shell_check "Moto stock camera package present" "pm list packages" "(motorola\\.camera|com\\.motorola\\.camera|camera3)"
+else
+  log "INFO: stock camera package check skipped (REQUIRE_STOCK_CAMERA_PACKAGE=0)"
+fi
 run_shell_check "5G indicators in telephony registry" "dumpsys telephony.registry" "(nrState|NETWORK_TYPE_NR|5g)"
 run_shell_check "IMS/RCS stack visibility" "service list" "(ims|rcs)"
 run_shell_check "SIM/eSIM subscription visibility" "dumpsys isub" "(SubInfo|Subscription)"
@@ -82,6 +92,10 @@ log "  [ ] Test rear main camera"
 log "  [ ] Test rear ultrawide/tele/macro cameras (if present)"
 log "  [ ] Test front camera"
 log "  [ ] Test video recording all cameras"
+log "  [ ] Test Motorola camera HDR mode"
+log "  [ ] Test Motorola camera Night mode"
+log "  [ ] Test Motorola camera Portrait mode"
+log "  [ ] Test Motorola camera stabilization quality (EIS/OIS path)"
 
 if [[ "${failures}" -gt 0 ]]; then
   echo
