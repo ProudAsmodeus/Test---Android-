@@ -123,3 +123,9 @@ It provides persistent destination rules and on-device enforcement through a
 local VPN service, plus connection visibility via kernel socket table snapshots
 where available. This is intended as a practical user-facing control layer on
 top of the release pipeline hardening checks above.
+
+Additional app-side protections include:
+
+- Severity coloring (green/orange/red) for observed connections
+- Risk heuristics based on source app naming and destination-country watchlist
+- A dedicated security news feed section with hourly automatic updates

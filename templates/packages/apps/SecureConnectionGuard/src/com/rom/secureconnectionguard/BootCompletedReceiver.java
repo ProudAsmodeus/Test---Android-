@@ -18,6 +18,8 @@ public final class BootCompletedReceiver extends BroadcastReceiver {
             return;
         }
 
+        NewsUpdateScheduler.scheduleHourly(context);
+
         PolicyStore store = new PolicyStore(context);
         if (!store.isProtectionEnabled()) {
             return;

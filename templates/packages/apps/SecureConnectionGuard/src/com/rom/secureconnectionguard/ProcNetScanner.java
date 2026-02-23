@@ -11,14 +11,14 @@ import java.util.List;
 final class ProcNetScanner {
     private static final int MAX_RESULTS = 200;
 
-    private static final class ScanItem {
+    static final class ActiveConnection {
         final String destinationIp;
         final int destinationPort;
         final String protocol;
         final String state;
         final int uid;
 
-        ScanItem(String destinationIp, int destinationPort, String protocol, String state, int uid) {
+        ActiveConnection(String destinationIp, int destinationPort, String protocol, String state, int uid) {
             this.destinationIp = destinationIp;
             this.destinationPort = destinationPort;
             this.protocol = protocol;
@@ -31,14 +31,18 @@ final class ProcNetScanner {
         }
     }
 
-    List<String> scanConnectionLines() {
-        List<ScanItem> items = new ArrayList<>();
+    List<ActiveConnection> scanConnections() {
+        List<ActiveConnection> items = new ArrayList<>();
         scanFile(items, "/proc/net/tcp", "TCP");
         scanFile(items, "/proc/net/tcp6", "TCP6");
         scanFile(items, "/proc/net/udp", "UDP");
         scanFile(items, "/proc/net/udp6", "UDP6");
-
         Collections.sort(items, (a, b) -> a.toDisplayLine().compareToIgnoreCase(b.toDisplayLine()));
+        return items;
+    }
+
+    List<String> scanConnectionLines() {
+        List<ActiveConnection> items = scanConnections();
 
         List<String> lines = new ArrayList<>();
         for (int i = 0; i < items.size() && i < MAX_RESULTS; i++) {
@@ -47,7 +51,20 @@ final class ProcNetScanner {
         return lines;
     }
 
-    private void scanFile(List<ScanItem> out, String path, String protocol) {
+    int findUidForConnection(String protocol, String destinationIp, int destinationPort) {
+        List<ActiveConnection> items = scanConnections();
+        for (ActiveConnection item : items) {
+            boolean protocolMatch = item.protocol.equalsIgnoreCase(protocol)
+                    || item.protocol.startsWith(protocol);
+            if (protocolMatch && destinationIp.equals(item.destinationIp)
+                    && destinationPort == item.destinationPort) {
+                return item.uid;
+            }
+        }
+        return -1;
+    }
+
+    private void scanFile(List<ActiveConnection> out, String path, String protocol) {
         File file = new File(path);
         if (!file.exists() || !file.canRead()) {
             return;
@@ -61,7 +78,7 @@ final class ProcNetScanner {
                     first = false;
                     continue;
                 }
-                ScanItem item = parseLine(line, protocol);
+                ActiveConnection item = parseLine(line, protocol);
                 if (item != null) {
                     out.add(item);
                 }
@@ -71,7 +88,7 @@ final class ProcNetScanner {
         }
     }
 
-    private ScanItem parseLine(String line, String protocol) {
+    private ActiveConnection parseLine(String line, String protocol) {
         String[] cols = line.trim().split("\\s+");
         if (cols.length < 8) {
             return null;
@@ -102,7 +119,7 @@ final class ProcNetScanner {
         if (ip == null || "0.0.0.0".equals(ip) || "::".equals(ip)) {
             return null;
         }
-        return new ScanItem(ip, port, protocol, decodeState(stateHex), uid);
+        return new ActiveConnection(ip, port, protocol, decodeState(stateHex), uid);
     }
 
     private String decodeAddress(String hex, boolean ipv6) {

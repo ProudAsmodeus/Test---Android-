@@ -7,12 +7,15 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.VpnService;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ConnectionFirewallService extends VpnService {
     static final String ACTION_START = "com.rom.secureconnectionguard.action.START";
@@ -26,6 +29,8 @@ public final class ConnectionFirewallService extends VpnService {
     private Thread workerThread;
     private ParcelFileDescriptor vpnInterface;
     private PolicyStore policyStore;
+    private ProcNetScanner procNetScanner;
+    private final Map<Integer, String> uidToPackageCache = new HashMap<>();
 
     static Intent buildStartIntent(Context context) {
         Intent intent = new Intent(context, ConnectionFirewallService.class);
@@ -43,6 +48,7 @@ public final class ConnectionFirewallService extends VpnService {
     public void onCreate() {
         super.onCreate();
         policyStore = new PolicyStore(this);
+        procNetScanner = new ProcNetScanner();
     }
 
     @Override
@@ -57,6 +63,7 @@ public final class ConnectionFirewallService extends VpnService {
         }
 
         startForeground(NOTIFICATION_ID, buildNotification());
+        policyStore.setProtectionEnabled(true);
         startProtection();
         return START_STICKY;
     }
@@ -141,12 +148,22 @@ public final class ConnectionFirewallService extends VpnService {
                     continue;
                 }
 
+                int sourceUid = procNetScanner.findUidForConnection(
+                        parsed.protocol,
+                        parsed.destinationIp,
+                        parsed.destinationPort
+                );
+
                 ConnectionRecord tentative = new ConnectionRecord(
                         System.currentTimeMillis(),
                         parsed.destinationIp,
                         parsed.destinationPort,
                         parsed.protocol,
                         false,
+                        "",
+                        sourceUid,
+                        resolveSourceApp(sourceUid),
+                        "",
                         ""
                 );
 
@@ -164,13 +181,38 @@ public final class ConnectionFirewallService extends VpnService {
                         tentative.destinationPort,
                         tentative.protocol,
                         true,
-                        reason
+                        reason,
+                        tentative.sourceUid,
+                        tentative.sourceApp,
+                        tentative.countryCode,
+                        tentative.countryName
                 );
                 policyStore.addConnection(finalRecord);
             }
         } catch (IOException ignored) {
             // Expected during interface teardown.
         }
+    }
+
+    private String resolveSourceApp(int uid) {
+        if (uid <= 0) {
+            return "";
+        }
+        String cached = uidToPackageCache.get(uid);
+        if (cached != null) {
+            return cached;
+        }
+
+        PackageManager pm = getPackageManager();
+        String[] packages = pm.getPackagesForUid(uid);
+        if (packages == null || packages.length == 0) {
+            uidToPackageCache.put(uid, "");
+            return "";
+        }
+
+        String selected = packages[0];
+        uidToPackageCache.put(uid, selected);
+        return selected;
     }
 
     private Notification buildNotification() {
@@ -249,7 +291,6 @@ public final class ConnectionFirewallService extends VpnService {
                     + "." + (packet[17] & 0xff)
                     + "." + (packet[18] & 0xff)
                     + "." + (packet[19] & 0xff);
-
             return new ParsedPacket(destinationIp, port, protocol);
         }
     }
