@@ -9,6 +9,12 @@ Built-in ROM security app for connection oversight and rule enforcement.
 - Stores destination block rules persistently (SharedPreferences)
 - Enforces destination rules via local VPN routing + packet drop
 - Restores protection on boot if previously enabled
+- Colors each detected connection by severity:
+  - Green: low risk
+  - Orange: medium risk (sketchy source app or risk-watchlist country)
+  - Red: high risk (blocked or combined risk signals)
+- Separate "Security News" section with Android app vulnerability/attack feed
+- Hourly automatic news updates through scheduled background receiver
 
 ## Rule format
 

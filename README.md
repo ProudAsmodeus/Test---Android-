@@ -143,6 +143,13 @@ After bootstrap, run these commands from your AOSP tree root.
 - Persistent block rules (stored across reboots)
 - Rule enforcement through a local VPN service
 - Boot-time restart when protection was previously enabled
+- Severity colors per connection:
+  - Green (low), Orange (medium), Red (high)
+- Risk elevation when source app appears sketchy or destination country is in
+  a high-risk watchlist
+- Dedicated security news section for Android app vulnerabilities and active
+  attack reporting
+- Automatic news refresh every hour
 
 Rule format:
 

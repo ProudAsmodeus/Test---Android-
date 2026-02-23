@@ -5,81 +5,149 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <TextView
-        android:id="@+id/status_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold" />
-
-    <Switch
-        android:id="@+id/protection_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/protection_enabled" />
-
-    <Switch
-        android:id="@+id/block_suspicious_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/block_suspicious_enabled" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/blocked_rules_label"
-        android:textStyle="bold" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/rule_input"
+        <Button
+            android:id="@+id/tab_firewall_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/rule_input_hint"
-            android:inputType="text" />
+            android:text="@string/tab_firewall" />
 
         <Button
-            android:id="@+id/add_rule_button"
-            android:layout_width="wrap_content"
+            android:id="@+id/tab_news_button"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/add_rule" />
+            android:layout_weight="1"
+            android:text="@string/tab_news" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/rules_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:dividerHeight="6dp" />
+        android:layout_marginTop="8dp">
 
-    <Button
-        android:id="@+id/refresh_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/refresh_connections" />
+        <LinearLayout
+            android:id="@+id/firewall_section"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/captured_connections_label"
-        android:textStyle="bold" />
+            <TextView
+                android:id="@+id/status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_from_connection" />
+            <Switch
+                android:id="@+id/protection_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/protection_enabled" />
 
-    <ListView
-        android:id="@+id/connections_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:dividerHeight="6dp" />
+            <Switch
+                android:id="@+id/block_suspicious_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/block_suspicious_enabled" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/blocked_rules_label"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/rule_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/rule_input_hint"
+                    android:inputType="text" />
+
+                <Button
+                    android:id="@+id/add_rule_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_rule" />
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/rules_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:dividerHeight="6dp" />
+
+            <Button
+                android:id="@+id/refresh_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/refresh_connections" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/captured_connections_label"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_from_connection" />
+
+            <ListView
+                android:id="@+id/connections_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:dividerHeight="6dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/news_section"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/news_status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/refresh_news_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/news_refresh_button" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/news_list_label"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/news_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:dividerHeight="6dp" />
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
