@@ -76,6 +76,9 @@ copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70_xt2601_2" "vend
 echo "Copying built-in security firewall app..."
 copy_template_dir "${REPO_ROOT}/templates/packages/apps/SecureConnectionGuard" "packages/apps/SecureConnectionGuard"
 
+echo "Copying built-in AdGuard DNS control app..."
+copy_template_dir "${REPO_ROOT}/templates/packages/apps/AdGuardControl" "packages/apps/AdGuardControl"
+
 echo "Copying security automation scripts..."
 copy_template_file "${REPO_ROOT}/scripts/security/sync_latest_security_patches.sh" "scripts/security/sync_latest_security_patches.sh"
 copy_template_file "${REPO_ROOT}/scripts/security/verify_release_security.sh" "scripts/security/verify_release_security.sh"
@@ -115,7 +118,7 @@ Next steps:
      source build/envsetup.sh
      lunch aosp_xt2601_2_eu-user
      m -j\$(nproc)
-     # SecureConnectionGuard app is built into this product.
+     # SecureConnectionGuard and AdGuardControl apps are built into this product.
   4) Verify release security baseline:
      bash scripts/security/verify_release_security.sh \
        out/target/product/edge70_xt2601_2

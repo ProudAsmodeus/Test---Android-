@@ -118,6 +118,7 @@ mitigation backports where applicable.
 This template also includes a built-in app:
 
 - `SecureConnectionGuard` (`packages/apps/SecureConnectionGuard`)
+- `AdGuardControl` (`packages/apps/AdGuardControl`)
 
 It provides persistent destination rules and on-device enforcement through a
 local VPN service, plus connection visibility via kernel socket table snapshots
@@ -129,3 +130,4 @@ Additional app-side protections include:
 - Severity coloring (green/orange/red) for observed connections
 - Risk heuristics based on source app naming and destination-country watchlist
 - A dedicated security news feed section with hourly automatic updates
+- Quick Settings DNS toggles for AdGuard free and paid/personal DNS endpoints

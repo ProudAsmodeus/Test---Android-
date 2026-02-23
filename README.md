@@ -22,6 +22,8 @@ of the newest AOSP release branch.
   - `scripts/security/check_kernel_hardening_config.sh`
 - Built-in security app:
   - `packages/apps/SecureConnectionGuard`
+- Built-in DNS control app:
+  - `packages/apps/AdGuardControl`
 
 ## Quick start
 
@@ -166,3 +168,22 @@ Security note:
 
 - This template enforces destination blocking by routing selected destinations
   into the local VPN interface and dropping captured packets.
+
+## Built-in AdGuard DNS quick toggles
+
+`AdGuard Control` is included in the product and adds Quick Settings tiles:
+
+- **AdGuard Free**: toggles Private DNS to `dns.adguard-dns.com`
+- **AdGuard Paid**: toggles a user-configured paid/personal endpoint host
+
+Setup:
+
+1. Open **AdGuard Control**
+2. Set your paid endpoint host (example: `example.d.adguard-dns.com`)
+3. Add **AdGuard Free** and **AdGuard Paid** tiles to Quick Settings
+4. Toggle either tile from the drop-down shade to enable/disable
+
+Important note:
+
+- This integration manages Android Private DNS endpoints for AdGuard free/paid
+  DNS modes. It does not redistribute proprietary paid AdGuard binaries.
