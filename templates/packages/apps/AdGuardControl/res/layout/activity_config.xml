@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/configured_paid_endpoint"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/paid_endpoint_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/paid_endpoint_hint"
+            android:inputType="textUri" />
+
+        <Button
+            android:id="@+id/save_paid_endpoint_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save_paid_endpoint" />
+
+        <Button
+            android:id="@+id/enable_free_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/enable_free" />
+
+        <Button
+            android:id="@+id/toggle_paid_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/toggle_paid" />
+
+        <Button
+            android:id="@+id/disable_all_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/disable_all" />
+
+        <Button
+            android:id="@+id/open_adguard_app_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/open_adguard_app" />
+
+        <Button
+            android:id="@+id/open_adguard_site_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/open_adguard_site" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <!--
+    Add your ROM-specific projects below.
+    Example entries:
+      <project name="YourOrg/android_device_vendor_codename"
+               path="device/vendor/codename"
+               remote="github"
+               revision="main" />
+      <project name="YourOrg/android_kernel_vendor_soc"
+               path="kernel/vendor/soc"
+               remote="github"
+               revision="main" />
+      <project name="YourOrg/proprietary_vendor_vendor"
+               path="vendor/vendor"
+               remote="github"
+               revision="main" />
+  -->
+
+  <remote name="github"
+          fetch="https://github.com/" />
+
+  <!-- Motorola Edge 70 XT2601-2 dedicated project examples -->
+  <!--
+  <project name="YourOrg/android_device_motorola_edge70_xt2601_2"
+           path="device/motorola/edge70_xt2601_2"
+           remote="github"
+           revision="main" />
+  <project name="YourOrg/android_kernel_motorola_edge70_xt2601_2"
+           path="kernel/motorola/edge70_xt2601_2"
+           remote="github"
+           revision="main" />
+  <project name="YourOrg/proprietary_vendor_motorola_edge70_xt2601_2"
+           path="vendor/motorola/edge70_xt2601_2"
+           remote="github"
+           revision="main" />
+  -->
+</manifest>
