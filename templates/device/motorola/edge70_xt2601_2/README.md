@@ -30,3 +30,5 @@ Reference identifiers:
 - Keep AVB enabled and signed
 - Run:
   `scripts/security/verify_release_security.sh out/target/product/edge70_xt2601_2`
+- Block OTA packaging unless this passes:
+  `scripts/security/release_gate.sh <product_out> <target_files.zip> <keys_dir>`

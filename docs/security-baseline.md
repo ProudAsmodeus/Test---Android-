@@ -21,8 +21,12 @@ process that depends on:
 4. Enforce privileged app permissions (`ro.control_privapp_permissions=enforce`)
 5. Keep security patch levels current (system + vendor)
 6. Sign OTA and target files with protected offline keys
+7. Block OTA packaging if release gate checks fail
 
 ## CVE/update workflow
+
+After running `bootstrap_rom_base.sh`, these scripts are available directly
+inside your AOSP tree under `scripts/security/`.
 
 1. Sync latest AOSP sources on `android-latest-release`:
 
@@ -50,6 +54,36 @@ process that depends on:
    ```bash
    MAX_PATCH_AGE_DAYS=30 bash scripts/security/verify_release_security.sh \
      out/target/product/edge70_xt2601_2
+   ```
+
+4. Run release gate before any OTA packaging:
+
+   ```bash
+   bash scripts/security/release_gate.sh \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys
+   ```
+
+   Optional: customize required key set for your branch:
+
+   ```bash
+   REQUIRED_KEYS="releasekey,platform,shared,media" \
+   bash scripts/security/release_gate.sh \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys
+   ```
+
+5. Generate signed OTA via secure wrapper:
+
+   ```bash
+   bash scripts/security/package_secure_ota.sh \
+     /path/to/aosp/tree \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys \
+     out/dist/aosp_xt2601_2_eu-ota-signed.zip
    ```
 
 ## GrapheneOS resemblance goals (baseline)

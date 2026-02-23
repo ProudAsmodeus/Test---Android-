@@ -31,6 +31,20 @@ copy_template_dir() {
   echo "Copied template ${source_dir} -> ${target_dir}"
 }
 
+copy_template_file() {
+  local source_file="$1"
+  local target_file="$2"
+
+  if [[ -f "${target_file}" ]]; then
+    echo "Existing ${target_file} detected; leaving current file untouched."
+    return 0
+  fi
+
+  mkdir -p "$(dirname "${target_file}")"
+  cp "${source_file}" "${target_file}"
+  echo "Copied template ${source_file} -> ${target_file}"
+}
+
 if ! command -v repo >/dev/null 2>&1; then
   echo "Error: repo tool not found in PATH."
   echo "Install instructions: https://source.android.com/docs/setup/download"
@@ -58,6 +72,16 @@ cp -R "${REPO_ROOT}/templates/vendor/rom/." vendor/rom/
 echo "Copying dedicated Motorola Edge 70 XT2601-2 EU skeleton..."
 copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70_xt2601_2" "device/motorola/edge70_xt2601_2"
 copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70_xt2601_2" "vendor/motorola/edge70_xt2601_2"
+
+echo "Copying security automation scripts..."
+copy_template_file "${REPO_ROOT}/scripts/security/sync_latest_security_patches.sh" "scripts/security/sync_latest_security_patches.sh"
+copy_template_file "${REPO_ROOT}/scripts/security/verify_release_security.sh" "scripts/security/verify_release_security.sh"
+copy_template_file "${REPO_ROOT}/scripts/security/release_gate.sh" "scripts/security/release_gate.sh"
+copy_template_file "${REPO_ROOT}/scripts/security/package_secure_ota.sh" "scripts/security/package_secure_ota.sh"
+chmod +x scripts/security/*.sh
+
+echo "Copying security baseline documentation..."
+copy_template_file "${REPO_ROOT}/docs/security-baseline.md" "docs/security-baseline.md"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"
@@ -87,7 +111,19 @@ Next steps:
      lunch aosp_xt2601_2_eu-user
      m -j\$(nproc)
   4) Verify release security baseline:
-     bash "${REPO_ROOT}/scripts/security/verify_release_security.sh" \
+     bash scripts/security/verify_release_security.sh \
        out/target/product/edge70_xt2601_2
+  5) Run release gate before OTA packaging:
+     bash scripts/security/release_gate.sh \
+       out/target/product/edge70_xt2601_2 \
+       out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+       /path/to/release-keys
+  6) Package signed OTA via secure wrapper:
+     bash scripts/security/package_secure_ota.sh \
+       "$(pwd)" \
+       out/target/product/edge70_xt2601_2 \
+       out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+       /path/to/release-keys \
+       out/dist/aosp_xt2601_2_eu-ota-signed.zip
 
 EOF

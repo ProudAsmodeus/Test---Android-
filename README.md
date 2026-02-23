@@ -17,6 +17,8 @@ of the newest AOSP release branch.
   - `vendor/rom/config/security_hardening.mk`
   - `scripts/security/sync_latest_security_patches.sh`
   - `scripts/security/verify_release_security.sh`
+  - `scripts/security/release_gate.sh`
+  - `scripts/security/package_secure_ota.sh`
 
 ## Quick start
 
@@ -70,6 +72,8 @@ of the newest AOSP release branch.
 
 ## Security update workflow
 
+After bootstrap, run these commands from your AOSP tree root.
+
 1. Sync latest upstream patches (including newest Android security updates):
 
    ```bash
@@ -83,6 +87,36 @@ of the newest AOSP release branch.
      out/target/product/edge70_xt2601_2
    ```
 
-3. Review detailed policy:
+3. Block OTA packaging unless release/security checks pass:
+
+   ```bash
+   bash scripts/security/release_gate.sh \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys
+   ```
+
+   Optional key-set override for branches with fewer key aliases:
+
+   ```bash
+   REQUIRED_KEYS="releasekey,platform,shared,media" \
+   bash scripts/security/release_gate.sh \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys
+   ```
+
+4. Package signed OTA only after gate passes:
+
+   ```bash
+   bash scripts/security/package_secure_ota.sh \
+     /path/to/aosp/tree \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
+     /path/to/release-keys \
+     out/dist/aosp_xt2601_2_eu-ota-signed.zip
+   ```
+
+5. Review detailed policy:
 
    - `docs/security-baseline.md`

@@ -69,6 +69,7 @@ vendor_prop_file="$(find_prop_file \
 system_patch="$(read_prop ro.build.version.security_patch "${system_prop_file}")"
 build_type="$(read_prop ro.build.type "${system_prop_file}")"
 debuggable="$(read_prop ro.debuggable "${system_prop_file}")"
+build_tags="$(read_prop ro.build.tags "${system_prop_file}")"
 
 vendor_patch=""
 if [[ -n "${vendor_prop_file:-}" ]]; then
@@ -129,6 +130,25 @@ if [[ "${debuggable}" != "0" ]]; then
   failures=$((failures + 1))
 else
   echo "PASS: ro.debuggable=0"
+fi
+
+if [[ -z "${build_tags}" ]]; then
+  echo "FAIL: ro.build.tags missing (expected release-keys)"
+  failures=$((failures + 1))
+else
+  if [[ "${build_tags}" != *release-keys* ]]; then
+    echo "FAIL: ro.build.tags=${build_tags} (must include release-keys)"
+    failures=$((failures + 1))
+  else
+    echo "PASS: ro.build.tags includes release-keys"
+  fi
+
+  if [[ "${build_tags}" == *test-keys* || "${build_tags}" == *dev-keys* ]]; then
+    echo "FAIL: ro.build.tags=${build_tags} (must not include test/dev keys)"
+    failures=$((failures + 1))
+  else
+    echo "PASS: ro.build.tags excludes test/dev keys"
+  fi
 fi
 
 if [[ ! -f "${PRODUCT_OUT}/vbmeta.img" ]]; then
