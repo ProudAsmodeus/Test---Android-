@@ -84,7 +84,10 @@ Next steps:
      repo sync -c -j\$(nproc)
   3) Build:
      source build/envsetup.sh
-     lunch aosp_xt2601_2_eu-userdebug
+     lunch aosp_xt2601_2_eu-user
      m -j\$(nproc)
+  4) Verify release security baseline:
+     bash "${REPO_ROOT}/scripts/security/verify_release_security.sh" \
+       out/target/product/edge70_xt2601_2
 
 EOF

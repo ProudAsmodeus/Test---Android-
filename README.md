@@ -13,6 +13,10 @@ of the newest AOSP release branch.
   - `device/motorola/edge70_xt2601_2`
   - `vendor/motorola/edge70_xt2601_2`
   - Includes `aosp_xt2601_2_eu` lunch target (SKU: `XT2601-2`)
+- Security baseline tooling:
+  - `vendor/rom/config/security_hardening.mk`
+  - `scripts/security/sync_latest_security_patches.sh`
+  - `scripts/security/verify_release_security.sh`
 
 ## Quick start
 
@@ -41,8 +45,14 @@ of the newest AOSP release branch.
 
    ```bash
    source build/envsetup.sh
-   lunch aosp_xt2601_2_eu-userdebug
+   lunch aosp_xt2601_2_eu-user
    m -j$(nproc)
+   ```
+
+   For bring-up debugging only:
+
+   ```bash
+   lunch aosp_xt2601_2_eu-userdebug
    ```
 
 ## Important notes
@@ -57,3 +67,22 @@ of the newest AOSP release branch.
 - GTIN `0840493606774` and product code `XT2601-2` are stored as reference
   inputs. Confirm additional hardware identifiers from stock firmware before
   finalizing kernel and modem/radio config.
+
+## Security update workflow
+
+1. Sync latest upstream patches (including newest Android security updates):
+
+   ```bash
+   bash scripts/security/sync_latest_security_patches.sh /path/to/aosp/tree
+   ```
+
+2. Verify release build posture:
+
+   ```bash
+   bash scripts/security/verify_release_security.sh \
+     out/target/product/edge70_xt2601_2
+   ```
+
+3. Review detailed policy:
+
+   - `docs/security-baseline.md`
