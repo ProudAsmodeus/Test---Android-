@@ -59,7 +59,7 @@ inside your AOSP tree under `scripts/security/`.
 4. Run release gate before any OTA packaging:
 
    ```bash
-   bash scripts/security/release_gate.sh \
+   RELEASE_GATE_MODE=presign bash scripts/security/release_gate.sh \
      out/target/product/edge70_xt2601_2 \
      out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
      /path/to/release-keys
@@ -75,6 +75,15 @@ inside your AOSP tree under `scripts/security/`.
      /path/to/release-keys
    ```
 
+   For signed target files (strict release check):
+
+   ```bash
+   bash scripts/security/release_gate.sh \
+     out/target/product/edge70_xt2601_2 \
+     out/dist/aosp_xt2601_2_eu-target_files-signed.zip \
+     /path/to/release-keys
+   ```
+
 5. Generate signed OTA via secure wrapper:
 
    ```bash
@@ -84,6 +93,13 @@ inside your AOSP tree under `scripts/security/`.
      out/dist/aosp_xt2601_2_eu-target_files-unsigned.zip \
      /path/to/release-keys \
      out/dist/aosp_xt2601_2_eu-ota-signed.zip
+   ```
+
+6. Audit kernel config hardening baseline:
+
+   ```bash
+   bash scripts/security/check_kernel_hardening_config.sh \
+     /path/to/kernel/.config
    ```
 
 ## GrapheneOS resemblance goals (baseline)

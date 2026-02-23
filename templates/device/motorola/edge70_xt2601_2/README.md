@@ -31,4 +31,6 @@ Reference identifiers:
 - Run:
   `scripts/security/verify_release_security.sh out/target/product/edge70_xt2601_2`
 - Block OTA packaging unless this passes:
-  `scripts/security/release_gate.sh <product_out> <target_files.zip> <keys_dir>`
+  `RELEASE_GATE_MODE=presign scripts/security/release_gate.sh <product_out> <unsigned_target_files.zip> <keys_dir>`
+- Audit kernel baseline:
+  `scripts/security/check_kernel_hardening_config.sh /path/to/kernel/.config`
