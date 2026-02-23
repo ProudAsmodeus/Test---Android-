@@ -9,7 +9,7 @@ $(call inherit-product, vendor/rom/config/version.mk)
 PRODUCT_DEVICE := edge70
 PRODUCT_NAME := aosp_edge70
 PRODUCT_BRAND := motorola
-PRODUCT_MODEL := Motorola Edge 70 (12GB/512GB)
+PRODUCT_MODEL := Motorola Edge 70 (XT2601-2)
 PRODUCT_MANUFACTURER := motorola
 
 PRODUCT_COPY_FILES += \
