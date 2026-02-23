@@ -4,6 +4,7 @@
     <string name="tab_firewall">Connection Guard</string>
     <string name="tab_news">Security News</string>
     <string name="protection_enabled">Enable protection</string>
+    <string name="system_backend_enabled">Prefer system backend (iptables)</string>
     <string name="block_suspicious_enabled">Block suspicious destinations automatically</string>
     <string name="blocked_rules_label">Blocked destination rules (IPv4 or CIDR)</string>
     <string name="rule_input_hint">Example: 198.51.100.42 or 203.0.113.0/24</string>
@@ -11,8 +12,12 @@
     <string name="refresh_connections">Refresh connections</string>
     <string name="captured_connections_label">Recent connections</string>
     <string name="status_prefix">Status: </string>
+    <string name="status_backend_prefix">Backend: </string>
     <string name="status_protection_on">Protection ON</string>
     <string name="status_protection_off">Protection OFF</string>
+    <string name="status_backend_system">system-level</string>
+    <string name="status_backend_vpn">vpn-fallback</string>
+    <string name="status_backend_inactive">inactive</string>
     <string name="notification_title">Secure Connection Guard active</string>
     <string name="notification_text">Monitoring and enforcing connection rules.</string>
     <string name="invalid_rule">Invalid rule. Use IPv4 or CIDR format.</string>

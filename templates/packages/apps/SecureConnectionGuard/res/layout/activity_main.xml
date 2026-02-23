@@ -55,6 +55,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/block_suspicious_enabled" />
 
+            <Switch
+                android:id="@+id/system_backend_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/system_backend_enabled" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
