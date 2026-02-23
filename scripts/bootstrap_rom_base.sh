@@ -55,9 +55,9 @@ echo "Copying ROM vendor base..."
 mkdir -p vendor/rom
 cp -R "${REPO_ROOT}/templates/vendor/rom/." vendor/rom/
 
-echo "Copying Motorola Edge 70 XT2601-2 EU skeleton..."
-copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70" "device/motorola/edge70"
-copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70" "vendor/motorola/edge70"
+echo "Copying dedicated Motorola Edge 70 XT2601-2 EU skeleton..."
+copy_template_dir "${REPO_ROOT}/templates/device/motorola/edge70_xt2601_2" "device/motorola/edge70_xt2601_2"
+copy_template_dir "${REPO_ROOT}/templates/vendor/motorola/edge70_xt2601_2" "vendor/motorola/edge70_xt2601_2"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"

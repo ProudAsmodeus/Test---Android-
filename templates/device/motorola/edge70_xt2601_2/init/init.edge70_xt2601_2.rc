@@ -1,0 +1,4 @@
+# Placeholder init configuration for Motorola Edge 70 EU (XT2601-2).
+
+on early-boot
+    setprop ro.edge70_xt2601_2.bringup 1
