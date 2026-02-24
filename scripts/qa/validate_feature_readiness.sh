@@ -6,6 +6,7 @@ DEVICE_PATH="${DEVICE_PATH:-device/samsung/a536b_ds}"
 VENDOR_PATH="${VENDOR_PATH:-vendor/samsung/a536b_ds}"
 MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
 REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
+REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
 
 DEVICE_DIR="${AOSP_ROOT}/${DEVICE_PATH}"
 VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
@@ -103,7 +104,11 @@ if [[ -f "${BLOB_FILE}" ]]; then
 
   check_blob_group "telephony/radio stack" "(radio|ril|ims|qcril|telephony)"
   check_blob_group "5G/modem support" "(nr|5g|modem)"
-  check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa|uicc)"
+  if [[ "${REQUIRE_ESIM_SUPPORT}" == "1" ]]; then
+    check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa|uicc)"
+  else
+    echo "INFO: eSIM/eUICC coverage check skipped (REQUIRE_ESIM_SUPPORT=0)"
+  fi
   check_blob_group "camera stack" "(camera|camx|mmcamera)"
   check_blob_group "camera processing stack" "(arcsoft|bokeh|hdr|eis|ois|depth|chi|ais)"
   check_blob_group "camera app package blobs" "(samsung.*camera|sec.*camera|com\.sec\.android\.app\.camera)"

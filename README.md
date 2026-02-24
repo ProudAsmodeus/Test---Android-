@@ -83,7 +83,7 @@ of the newest AOSP release branch.
   modem/radio config.
 - "Smooth, optimized, clean" is addressed with conservative runtime defaults in
   `vendor/rom/config/optimization.mk`.
-- "Everything works" (calls/SMS/5G/eSIM/cameras) must be validated with both:
+- "Everything works" (calls/SMS/5G/cameras) must be validated with both:
   - source-tree readiness checks
   - real-device acceptance tests
 - "Samsung-like camera behavior/processing" requires stock camera app +

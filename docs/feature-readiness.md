@@ -5,7 +5,6 @@ This checklist is for "daily-driver complete" quality expectations:
 - smooth and responsive UI
 - stable calls and SMS
 - mobile data with 5G coverage support
-- eSIM provisioning and usage
 - all physical cameras and video paths
 - core system services expected in a modern Android ROM
 
@@ -25,7 +24,6 @@ This gate verifies:
 - blob category coverage for:
   - telephony/radio/IMS
   - 5G/modem
-  - eSIM/eUICC
   - camera
   - audio/voice
   - Wi-Fi/Bluetooth
@@ -41,7 +39,6 @@ bash scripts/qa/run_device_acceptance_suite.sh
 Automated checks include:
 
 - telephony-related Binder services
-- eSIM service visibility
 - camera service visibility
 - 5G indicators in telephony dumps
 - IMS/RCS service visibility
@@ -53,8 +50,14 @@ The script also prints a required manual checklist:
 - SMS send/receive
 - mobile data
 - 5G registration in target area
-- eSIM profile download/enable
 - front/rear cameras and video recording
+
+For devices/SKUs that support eSIM, enable eSIM checks explicitly:
+
+```bash
+REQUIRE_ESIM_SUPPORT=1 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+REQUIRE_ESIM_SUPPORT=1 bash scripts/qa/run_device_acceptance_suite.sh
+```
 
 ## 3) Smooth/optimized/clean defaults
 

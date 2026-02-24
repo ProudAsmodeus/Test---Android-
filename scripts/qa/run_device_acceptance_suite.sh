@@ -6,6 +6,7 @@ REPORT_DIR="${REPORT_DIR:-out/qa}"
 TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REPORT_FILE="${REPORT_DIR}/device-acceptance-${TIMESTAMP}.log"
 REQUIRE_STOCK_CAMERA_PACKAGE="${REQUIRE_STOCK_CAMERA_PACKAGE:-1}"
+REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
 failures=0
 
 if ! command -v adb >/dev/null 2>&1; then
@@ -64,7 +65,11 @@ if ! "${ADB[@]}" get-state >/dev/null 2>&1; then
 fi
 
 run_shell_check "Telephony services present" "service list" "(phone|isub|iphonesubinfo|isms)"
-run_shell_check "eSIM service present" "service list" "(euicc|euicc_service)"
+if [[ "${REQUIRE_ESIM_SUPPORT}" == "1" ]]; then
+  run_shell_check "eSIM service present" "service list" "(euicc|euicc_service)"
+else
+  log "INFO: eSIM service check skipped (REQUIRE_ESIM_SUPPORT=0)"
+fi
 run_shell_check "Camera services present" "service list" "(media\\.camera|cameraproxy)"
 run_shell_check "Camera provider process present" "ps -A" "(camera\\.provider|vendor\\.qti\\.hardware\\.camera|mm-qcamera-daemon)"
 run_shell_check "Camera intent launches" "am start -W -a android.media.action.STILL_IMAGE_CAMERA" "(Status: ok|Complete)"
@@ -77,7 +82,7 @@ else
 fi
 run_shell_check "5G indicators in telephony registry" "dumpsys telephony.registry" "(nrState|NETWORK_TYPE_NR|5g)"
 run_shell_check "IMS/RCS stack visibility" "service list" "(ims|rcs)"
-run_shell_check "SIM/eSIM subscription visibility" "dumpsys isub" "(SubInfo|Subscription)"
+run_shell_check "SIM subscription visibility" "dumpsys isub" "(SubInfo|Subscription)"
 
 log
 log "Manual checklist (must be verified on real network and SIM profile):"
@@ -87,7 +92,9 @@ log "  [ ] Send SMS"
 log "  [ ] Receive SMS"
 log "  [ ] Confirm mobile data attach"
 log "  [ ] Confirm 5G NSA/SA registration in normal usage area"
-log "  [ ] Download/enable eSIM profile"
+if [[ "${REQUIRE_ESIM_SUPPORT}" == "1" ]]; then
+  log "  [ ] Download/enable eSIM profile"
+fi
 log "  [ ] Test rear main camera"
 log "  [ ] Test rear ultrawide/tele/macro cameras (if present)"
 log "  [ ] Test front camera"

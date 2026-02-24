@@ -113,7 +113,7 @@ Further hardening beyond this scaffold should include dedicated kernel hardening
 SELinux policy tightening, memory allocator hardening work, and exploit
 mitigation backports where applicable.
 
-For core telephony/camera/eSIM/5G production readiness alongside security,
+For core telephony/camera/5G production readiness alongside security,
 follow `docs/feature-readiness.md` and the `scripts/qa/*` gates.
 
 For stock-quality Samsung camera behavior and processing path, follow

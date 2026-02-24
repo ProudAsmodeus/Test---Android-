@@ -86,11 +86,6 @@ vendor/lib64/vendor.samsung.hardware.radio.sim-V1-ndk.so|a2f0be5b802aa317d05f388
 vendor/firmware/modem.bin:vendor/firmware/SM-A536B/modem.bin
 vendor/firmware/modem_debug.bin:vendor/firmware/SM-A536B/modem_debug.bin
 
-# eSIM / eUICC
-system_ext/priv-app/EuiccService/EuiccService.apk
-system_ext/priv-app/LPA/LPA.apk
-vendor/etc/permissions/android.hardware.nfc.uicc.xml
-
 # NFC
 vendor/bin/hw/nxp.android.hardware.nfc@1.2-service|abc05f02698f23b207d8740566c35ce9fc71535c
 vendor/etc/init/nxp.android.hardware.nfc@1.2-service.rc|5ea26a6c13ccf810c52c4cc4a3518c14fe065fbe
