@@ -29,6 +29,12 @@ Reference identifiers:
    `scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
 6. Pass on-device acceptance suite after flashing:
    `scripts/qa/run_device_acceptance_suite.sh`
+7. Prepare DSU sideload artifacts from build output:
+   `scripts/dsu/build_dsu_sideload_artifacts.sh /path/to/aosp/tree /path/to/aosp/tree/out/target/product/a536b_ds`
+8. Check DSU device prerequisites and launch sideload:
+   `scripts/dsu/check_device_dsu_prereqs.sh`
+   then:
+   `source out/dist/dsu/dsu-artifacts.env && bash scripts/dsu/run_dsu_sideload.sh "${SYSTEM_RAW_GZ_PATH}" "${SYSTEM_RAW_SIZE}"`
 
 ## Secure release guidance
 

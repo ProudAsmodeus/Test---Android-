@@ -4,7 +4,8 @@
 
 PRODUCT_BRAND := Android
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.rom.base=true
+    ro.rom.base=true \
+    persist.sys.fflag.override.settings_dynamic_system=true
 
 $(call inherit-product, vendor/rom/config/security_hardening.mk)
 $(call inherit-product, vendor/rom/config/optimization.mk)

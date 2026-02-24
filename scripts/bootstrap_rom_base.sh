@@ -93,6 +93,12 @@ copy_template_file "${REPO_ROOT}/scripts/qa/validate_feature_readiness.sh" "scri
 copy_template_file "${REPO_ROOT}/scripts/qa/run_device_acceptance_suite.sh" "scripts/qa/run_device_acceptance_suite.sh"
 chmod +x scripts/qa/*.sh
 
+echo "Copying DSU sideload helper scripts..."
+copy_template_file "${REPO_ROOT}/scripts/dsu/build_dsu_sideload_artifacts.sh" "scripts/dsu/build_dsu_sideload_artifacts.sh"
+copy_template_file "${REPO_ROOT}/scripts/dsu/check_device_dsu_prereqs.sh" "scripts/dsu/check_device_dsu_prereqs.sh"
+copy_template_file "${REPO_ROOT}/scripts/dsu/run_dsu_sideload.sh" "scripts/dsu/run_dsu_sideload.sh"
+chmod +x scripts/dsu/*.sh
+
 echo "Copying camera integration helper scripts..."
 copy_template_file "${REPO_ROOT}/scripts/camera/integrate_samsung_camera.sh" "scripts/camera/integrate_samsung_camera.sh"
 copy_template_file "${REPO_ROOT}/scripts/camera/fetch_samsung_camera_prebuilt.sh" "scripts/camera/fetch_samsung_camera_prebuilt.sh"
@@ -102,6 +108,7 @@ echo "Copying security baseline documentation..."
 copy_template_file "${REPO_ROOT}/docs/security-baseline.md" "docs/security-baseline.md"
 copy_template_file "${REPO_ROOT}/docs/feature-readiness.md" "docs/feature-readiness.md"
 copy_template_file "${REPO_ROOT}/docs/camera-stock-parity.md" "docs/camera-stock-parity.md"
+copy_template_file "${REPO_ROOT}/docs/dsu-sideloading.md" "docs/dsu-sideloading.md"
 
 VERSION_FILE="vendor/rom/config/version.mk"
 ESCAPED_ROM_NAME="$(printf '%s\n' "${ROM_NAME}" | sed 's/[&|]/\\&/g')"
@@ -153,9 +160,20 @@ Next steps:
      AUTO_FETCH_STOCK_CAMERA_APP=1 bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
   9) Run on-device acceptance checks (after flashing build):
      bash scripts/qa/run_device_acceptance_suite.sh
-  10) Fetch verified Samsung stock camera prebuilt (for strict readiness):
+  10) Build DSU sideload artifacts from your compiled images:
+      bash scripts/dsu/build_dsu_sideload_artifacts.sh \
+        "$(pwd)" \
+        out/target/product/a536b_ds
+  11) Check connected device DSU prerequisites:
+      bash scripts/dsu/check_device_dsu_prereqs.sh
+  12) Launch DSU sideload install from host (non-root adb flow):
+      source out/dist/dsu/dsu-artifacts.env
+      bash scripts/dsu/run_dsu_sideload.sh \
+        "\${SYSTEM_RAW_GZ_PATH}" \
+        "\${SYSTEM_RAW_SIZE}"
+  13) Fetch verified Samsung stock camera prebuilt (for strict readiness):
       bash scripts/camera/fetch_samsung_camera_prebuilt.sh "$(pwd)"
-  11) Bootstrap stock camera parity path (optional but recommended):
+  14) Bootstrap stock camera parity path (optional but recommended):
       bash scripts/camera/integrate_samsung_camera.sh "$(pwd)" /path/to/stock_dump
 
 EOF

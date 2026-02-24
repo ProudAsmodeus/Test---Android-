@@ -3,6 +3,7 @@ DEVICE_PATH := device/samsung/a536b_ds
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/developer_gsi_keys.mk)
 
 # Inherit Samsung Exynos common + ROM overlays.
 $(call inherit-product, device/samsung/s5e8825-common/common.mk)

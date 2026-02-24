@@ -8,6 +8,7 @@ MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
 REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
 REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
 AUTO_FETCH_STOCK_CAMERA_APP="${AUTO_FETCH_STOCK_CAMERA_APP:-0}"
+REQUIRE_DSU_SUPPORT="${REQUIRE_DSU_SUPPORT:-1}"
 
 DEVICE_DIR="${AOSP_ROOT}/${DEVICE_PATH}"
 VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
@@ -18,6 +19,9 @@ INIT_RC="${DEVICE_DIR}/init/init.a536b_ds.rc"
 BLOB_FILE="${VENDOR_DIR}/proprietary-files.txt"
 CAMERA_VENDOR_MK="${VENDOR_DIR}/camera/camera-vendor.mk"
 CAMERA_PREBUILT_DIR="${VENDOR_DIR}/camera/prebuilt"
+DSU_BUILD_SCRIPT="${AOSP_ROOT}/scripts/dsu/build_dsu_sideload_artifacts.sh"
+DSU_LAUNCH_SCRIPT="${AOSP_ROOT}/scripts/dsu/run_dsu_sideload.sh"
+DSU_PREFLIGHT_SCRIPT="${AOSP_ROOT}/scripts/dsu/check_device_dsu_prereqs.sh"
 
 failures=0
 
@@ -103,6 +107,33 @@ if [[ -f "${DEVICE_MK}" ]]; then
   else
     fail "device.mk should include vendor camera integration makefile"
   fi
+fi
+
+if [[ "${REQUIRE_DSU_SUPPORT}" == "1" ]]; then
+  if rg -n "developer_gsi_keys\.mk" "${DEVICE_MK}" >/dev/null 2>&1; then
+    pass "device.mk includes developer_gsi_keys for DSU verification"
+  else
+    fail "device.mk should inherit developer_gsi_keys.mk for DSU sideload support"
+  fi
+
+  if rg -n "BOARD_USES_METADATA_PARTITION[[:space:]]*:=[[:space:]]*true" "${BOARD_CONFIG}" >/dev/null 2>&1; then
+    pass "BoardConfig enables metadata partition required by DSU"
+  else
+    fail "BoardConfig should set BOARD_USES_METADATA_PARTITION := true for DSU"
+  fi
+
+  if rg -n "BOARD_SUPER_PARTITION_SIZE" "${BOARD_CONFIG}" >/dev/null 2>&1 \
+    && rg -n "(BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST|BOARD_SUPER_PARTITION_GROUPS)" "${BOARD_CONFIG}" >/dev/null 2>&1; then
+    pass "BoardConfig defines dynamic/super partition layout for DSU"
+  else
+    fail "BoardConfig missing dynamic/super partition declarations needed for DSU"
+  fi
+
+  require_file "${DSU_BUILD_SCRIPT}" "DSU artifact builder script"
+  require_file "${DSU_LAUNCH_SCRIPT}" "DSU sideload launcher script"
+  require_file "${DSU_PREFLIGHT_SCRIPT}" "DSU preflight checker script"
+else
+  echo "INFO: DSU support check skipped (REQUIRE_DSU_SUPPORT=0)"
 fi
 
 check_no_placeholders "${BOARD_CONFIG}" "BoardConfig"

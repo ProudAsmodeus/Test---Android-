@@ -22,10 +22,20 @@ Strict camera-ready check without manual APK placement:
 AUTO_FETCH_STOCK_CAMERA_APP=1 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
 ```
 
+If you need to skip DSU-specific checks temporarily:
+
+```bash
+REQUIRE_DSU_SUPPORT=0 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+```
+
 This gate verifies:
 
 - no placeholder/TODO values in key device config files
 - telephony base inheritance in device product config
+- DSU baseline requirements:
+  - `developer_gsi_keys.mk` inheritance
+  - metadata partition + dynamic partition declarations in BoardConfig
+  - DSU helper scripts present in `scripts/dsu/`
 - meaningful proprietary blob population
 - blob category coverage for:
   - telephony/radio/IMS
@@ -78,3 +88,28 @@ Do not treat the ROM as production-ready until:
 2. Source-tree feature gate passes (`scripts/qa/validate_feature_readiness.sh`)
 3. Device acceptance checks pass on real hardware
 4. Camera parity workflow is completed (`docs/camera-stock-parity.md`)
+
+## 5) DSU sideload test readiness
+
+Build DSU artifacts from your compiled output:
+
+```bash
+bash scripts/dsu/build_dsu_sideload_artifacts.sh \
+  /path/to/aosp/tree \
+  /path/to/aosp/tree/out/target/product/a536b_ds
+```
+
+Check connected device DSU preconditions:
+
+```bash
+bash scripts/dsu/check_device_dsu_prereqs.sh
+```
+
+Start DSU sideload installation:
+
+```bash
+source out/dist/dsu/dsu-artifacts.env
+bash scripts/dsu/run_dsu_sideload.sh \
+  "${SYSTEM_RAW_GZ_PATH}" \
+  "${SYSTEM_RAW_SIZE}"
+```

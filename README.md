@@ -24,6 +24,11 @@ of the newest AOSP release branch.
 - Feature-readiness tooling:
   - `scripts/qa/validate_feature_readiness.sh`
   - `scripts/qa/run_device_acceptance_suite.sh`
+- DSU sideload tooling:
+  - `scripts/dsu/build_dsu_sideload_artifacts.sh`
+  - `scripts/dsu/check_device_dsu_prereqs.sh`
+  - `scripts/dsu/run_dsu_sideload.sh`
+  - `docs/dsu-sideloading.md`
 - Camera parity tooling:
   - `scripts/camera/fetch_samsung_camera_prebuilt.sh`
   - `scripts/camera/integrate_samsung_camera.sh`
@@ -89,6 +94,8 @@ of the newest AOSP release branch.
   - real-device acceptance tests
 - "Samsung-like camera behavior/processing" requires stock camera app +
   matching proprietary camera processing stack from stock firmware.
+- DSU sideload testing requires dynamic partitions, enough `/data` free space,
+  and usually an unlocked bootloader for non-OEM signed images.
 
 ## Security update workflow
 
@@ -146,6 +153,7 @@ After bootstrap, run these commands from your AOSP tree root.
    - `docs/security-baseline.md`
    - `docs/feature-readiness.md`
    - `docs/camera-stock-parity.md`
+   - `docs/dsu-sideloading.md`
 
 6. Optional kernel hardening audit:
 
@@ -166,7 +174,30 @@ After bootstrap, run these commands from your AOSP tree root.
    bash scripts/qa/run_device_acceptance_suite.sh
    ```
 
-9. Bootstrap stock camera app + candidate processing blobs:
+9. Build DSU sideload artifacts (system.raw.gz + optional dsu.zip):
+
+   ```bash
+   bash scripts/dsu/build_dsu_sideload_artifacts.sh \
+     /path/to/aosp/tree \
+     /path/to/aosp/tree/out/target/product/a536b_ds
+   ```
+
+10. Check DSU prerequisites on the connected test device:
+
+   ```bash
+   bash scripts/dsu/check_device_dsu_prereqs.sh
+   ```
+
+11. Start DSU sideload install:
+
+   ```bash
+   source out/dist/dsu/dsu-artifacts.env
+   bash scripts/dsu/run_dsu_sideload.sh \
+     "${SYSTEM_RAW_GZ_PATH}" \
+     "${SYSTEM_RAW_SIZE}"
+   ```
+
+12. Bootstrap stock camera app + candidate processing blobs:
 
    ```bash
    bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump
@@ -254,3 +285,4 @@ To approach stock Samsung camera behavior/processing:
 See:
 
 - `docs/camera-stock-parity.md`
+- `docs/dsu-sideloading.md`
