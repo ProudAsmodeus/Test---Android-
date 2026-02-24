@@ -95,6 +95,7 @@ chmod +x scripts/qa/*.sh
 
 echo "Copying camera integration helper scripts..."
 copy_template_file "${REPO_ROOT}/scripts/camera/integrate_samsung_camera.sh" "scripts/camera/integrate_samsung_camera.sh"
+copy_template_file "${REPO_ROOT}/scripts/camera/fetch_samsung_camera_prebuilt.sh" "scripts/camera/fetch_samsung_camera_prebuilt.sh"
 chmod +x scripts/camera/*.sh
 
 echo "Copying security baseline documentation..."
@@ -149,10 +150,12 @@ Next steps:
      bash scripts/security/check_kernel_hardening_config.sh \
        /path/to/kernel/.config
   8) Validate source-tree feature readiness before release:
-     bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
+     AUTO_FETCH_STOCK_CAMERA_APP=1 bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
   9) Run on-device acceptance checks (after flashing build):
      bash scripts/qa/run_device_acceptance_suite.sh
-  10) Bootstrap stock camera parity path (optional but recommended):
+  10) Fetch verified Samsung stock camera prebuilt (for strict readiness):
+      bash scripts/camera/fetch_samsung_camera_prebuilt.sh "$(pwd)"
+  11) Bootstrap stock camera parity path (optional but recommended):
       bash scripts/camera/integrate_samsung_camera.sh "$(pwd)" /path/to/stock_dump
 
 EOF

@@ -23,6 +23,8 @@ Reference identifiers:
 3. Verify modem/radio and camera sub-variant details for your exact CSC
 4. Integrate stock camera app + processing candidates:
    `scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump`
+   or fetch verified prebuilt quickly:
+   `scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree`
 5. Pass source-tree readiness gate:
    `scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
 6. Pass on-device acceptance suite after flashing:

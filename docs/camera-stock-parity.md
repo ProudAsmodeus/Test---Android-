@@ -10,6 +10,13 @@ as your target build.
 bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump
 ```
 
+If you do not have a local stock dump yet, you can fetch a verified Samsung
+camera prebuilt for strict readiness checks:
+
+```bash
+bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
+```
+
 This script:
 
 - finds a Samsung camera APK candidate and copies it as:
@@ -60,3 +67,5 @@ Optional bypass controls (not recommended for production parity):
 
 - `REQUIRE_STOCK_CAMERA_APP=0` for source-tree readiness script
 - `REQUIRE_STOCK_CAMERA_PACKAGE=0` for on-device acceptance suite
+- `AUTO_FETCH_STOCK_CAMERA_APP=1` to let readiness script fetch a verified
+  Samsung camera prebuilt automatically

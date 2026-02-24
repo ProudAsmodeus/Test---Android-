@@ -7,6 +7,7 @@ VENDOR_PATH="${VENDOR_PATH:-vendor/samsung/a536b_ds}"
 MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
 REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
 REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
+AUTO_FETCH_STOCK_CAMERA_APP="${AUTO_FETCH_STOCK_CAMERA_APP:-0}"
 
 DEVICE_DIR="${AOSP_ROOT}/${DEVICE_PATH}"
 VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
@@ -63,6 +64,20 @@ check_blob_group() {
   fi
 }
 
+find_stock_camera_apk() {
+  local candidate
+  for candidate in \
+    "${CAMERA_PREBUILT_DIR}/SamsungCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/SecCamera.apk" \
+    "${CAMERA_PREBUILT_DIR}/com.sec.android.app.camera.apk"; do
+    if [[ -f "${candidate}" ]]; then
+      echo "${candidate}"
+      return 0
+    fi
+  done
+  return 1
+}
+
 echo "Validating standard feature readiness..."
 echo "- AOSP root: ${AOSP_ROOT}"
 echo "- Device path: ${DEVICE_PATH}"
@@ -117,21 +132,24 @@ if [[ -f "${BLOB_FILE}" ]]; then
 fi
 
 if [[ "${REQUIRE_STOCK_CAMERA_APP}" == "1" ]]; then
-  camera_apk=""
-  for candidate in \
-    "${CAMERA_PREBUILT_DIR}/SamsungCamera.apk" \
-    "${CAMERA_PREBUILT_DIR}/SecCamera.apk" \
-    "${CAMERA_PREBUILT_DIR}/com.sec.android.app.camera.apk"; do
-    if [[ -f "${candidate}" ]]; then
-      camera_apk="${candidate}"
-      break
+  camera_apk="$(find_stock_camera_apk || true)"
+
+  if [[ -z "${camera_apk}" && "${AUTO_FETCH_STOCK_CAMERA_APP}" == "1" ]]; then
+    fetch_script="${AOSP_ROOT}/scripts/camera/fetch_samsung_camera_prebuilt.sh"
+    if [[ -f "${fetch_script}" ]]; then
+      echo "INFO: stock camera APK missing; attempting auto-fetch via ${fetch_script}"
+      if bash "${fetch_script}" "${AOSP_ROOT}"; then
+        camera_apk="$(find_stock_camera_apk || true)"
+      fi
+    else
+      echo "INFO: auto-fetch script not found at ${fetch_script}"
     fi
-  done
+  fi
 
   if [[ -n "${camera_apk}" ]]; then
     pass "stock camera APK present (${camera_apk})"
   else
-    fail "stock camera APK missing in ${CAMERA_PREBUILT_DIR} (set REQUIRE_STOCK_CAMERA_APP=0 to bypass)"
+    fail "stock camera APK missing in ${CAMERA_PREBUILT_DIR} (set REQUIRE_STOCK_CAMERA_APP=0 to bypass or AUTO_FETCH_STOCK_CAMERA_APP=1 to auto-download)"
   fi
 fi
 

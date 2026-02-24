@@ -16,6 +16,12 @@ Run:
 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
 ```
 
+Strict camera-ready check without manual APK placement:
+
+```bash
+AUTO_FETCH_STOCK_CAMERA_APP=1 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+```
+
 This gate verifies:
 
 - no placeholder/TODO values in key device config files

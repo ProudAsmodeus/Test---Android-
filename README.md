@@ -25,6 +25,7 @@ of the newest AOSP release branch.
   - `scripts/qa/validate_feature_readiness.sh`
   - `scripts/qa/run_device_acceptance_suite.sh`
 - Camera parity tooling:
+  - `scripts/camera/fetch_samsung_camera_prebuilt.sh`
   - `scripts/camera/integrate_samsung_camera.sh`
   - `docs/camera-stock-parity.md`
 - Built-in security app:
@@ -170,6 +171,20 @@ After bootstrap, run these commands from your AOSP tree root.
    ```bash
    bash scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump
    ```
+
+   Fast path for strict readiness (without local dump):
+
+   ```bash
+   bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
+   ```
+
+## Android version baseline
+
+- Build bootstrap tracks `android-latest-release` by default, which follows the
+  newest public AOSP release branch available at sync time.
+- Current SM-A536B/DS template data (device/vendor references and fingerprints)
+  is aligned to recent Samsung stock firmware families used in active
+  `lineage-23.0` bring-up trees.
 
 ## Built-in connection firewall app
 

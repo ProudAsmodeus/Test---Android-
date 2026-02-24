@@ -21,3 +21,5 @@ For Samsung-like camera behavior and processing:
 3. Use:
    `scripts/camera/integrate_samsung_camera.sh /path/to/aosp /path/to/stock_dump`
    to bootstrap APK + camera blob candidates from stock dump
+4. For strict readiness without a local dump, fetch verified camera prebuilt:
+   `scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp`
