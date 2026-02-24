@@ -44,6 +44,9 @@ vendor/lib64/libsec2lsi_conversion.so
 vendor/lib64/libswlme.so
 vendor/lib64/libexynoscamera3.so|210ea0d01bdf52774e3d639c3d71af9fb6b747c9|308cb5bd2dbad1f502aca8f97a45dd623b10f520
 vendor/lib64/libSEF.quram.so
+vendor/lib64/libDualCamBokehCapture.camera.samsung.so
+vendor/lib64/libdualcam_refocus_image.so
+vendor/lib64/libdualcam_refocus_video.so
 vendor/lib64/libexynoscamera_cnr_plugin.so
 vendor/lib64/libexynoscamera_plugin.so
 vendor/lib64/libhwjsqz.so
