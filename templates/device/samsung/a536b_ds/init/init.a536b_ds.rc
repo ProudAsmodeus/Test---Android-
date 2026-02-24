@@ -1,4 +1,32 @@
-# Placeholder init configuration for Samsung Galaxy A53 5G (SM-A536B/DS).
+# SM-A536B/DS bring-up init rules derived from public Lineage trees.
 
-on early-boot
-    setprop ro.a536b_ds.bringup 1
+on early-init && property:ro.boot.em.model=SM-A536B
+    mount none /vendor/firmware/SM-A536B/AP_AUDIO_SLSI.bin /vendor/firmware/AP_AUDIO_SLSI.bin bind
+    mount none /vendor/firmware/SM-A536B/APDV_AUDIO_SLSI.bin /vendor/firmware/APDV_AUDIO_SLSI.bin bind
+    mount none /vendor/firmware/SM-A536B/mfc_fw.bin /vendor/firmware/mfc_fw.bin bind
+    mount none /vendor/firmware/SM-A536B/NPU.bin /vendor/firmware/NPU.bin bind
+    mount none /vendor/firmware/SM-A536B/os.checked.bin /vendor/firmware/os.checked.bin bind
+    mount none /vendor/firmware/SM-A536B/vts.bin /vendor/firmware/vts.bin bind
+    mount none /vendor/firmware/SM-A536B/calliope_sram.bin /vendor/firmware/calliope_sram.bin bind
+    mount none /vendor/tee/SM-A536B /vendor/tee bind
+
+service vendor.nfc_hal_service /vendor/bin/hw/nxp.android.hardware.nfc@1.2-service
+    disabled
+    class hal
+    user nfc
+    group nfc net_bt_admin
+
+service nfc_hal_service /vendor/bin/hw/android.hardware.nfc@1.2-service.samsung
+    disabled
+    class hal
+    user nfc
+    group nfc
+
+on property:ro.vendor.nfc.feature.chipname=NXP
+    start vendor.nfc_hal_service
+
+on property:ro.vendor.nfc.feature.chipname=SLSI
+    start nfc_hal_service
+
+on boot
+    restart audioserver

@@ -20,19 +20,48 @@
   <remote name="github"
           fetch="https://github.com/" />
 
-  <!-- Samsung Galaxy A53 5G (SM-A536B/DS) dedicated project examples -->
+  <remote name="lineage"
+          fetch="https://github.com/LineageOS" />
+
+  <!-- Samsung Galaxy A53 5G (SM-A536B/DS) project examples -->
   <!--
-  <project name="YourOrg/android_device_samsung_a536b_ds"
-           path="device/samsung/a536b_ds"
+  <project name="exynos1280/android_device_samsung_a53x"
+           path="device/samsung/a53x"
            remote="github"
-           revision="main" />
-  <project name="YourOrg/android_kernel_samsung_a536b_ds"
-           path="kernel/samsung/a536b_ds"
+           revision="lineage-23.0" />
+  <project name="exynos1280/android_device_samsung_s5e8825-common"
+           path="device/samsung/s5e8825-common"
            remote="github"
-           revision="main" />
-  <project name="YourOrg/proprietary_vendor_samsung_a536b_ds"
-           path="vendor/samsung/a536b_ds"
+           revision="lineage-23.0" />
+  <project name="exynos1280/proprietary_vendor_samsung_a53x"
+           path="vendor/samsung/a53x"
            remote="github"
-           revision="main" />
+           revision="lineage-23.0" />
+  <project name="exynos1280/proprietary_vendor_samsung_s5e8825-common"
+           path="vendor/samsung/s5e8825-common"
+           remote="github"
+           revision="lineage-23.0" />
+  <project name="exynos1280/android_kernel_samsung_s5e8825"
+           path="kernel/samsung/s5e8825"
+           remote="github"
+           revision="lineage-23.0" />
+
+  <!-- Required hardware/sepolicy dependencies for s5e8825-common -->
+  <project name="LineageOS/android_device_samsung_slsi_sepolicy"
+           path="device/samsung_slsi/sepolicy"
+           remote="lineage"
+           revision="lineage-23.0" />
+  <project name="LineageOS/android_hardware_samsung"
+           path="hardware/samsung"
+           remote="lineage"
+           revision="lineage-23.0" />
+  <project name="LineageOS/android_hardware_samsung_slsi_scsc_wifibt_wifi_hal"
+           path="hardware/samsung_slsi/scsc_wifibt/wifi_hal"
+           remote="lineage"
+           revision="lineage-23.0" />
+  <project name="LineageOS/android_hardware_samsung_slsi_scsc_wifibt_wpa_supplicant_lib"
+           path="hardware/samsung_slsi/scsc_wifibt/wpa_supplicant_lib"
+           remote="lineage"
+           revision="lineage-23.0" />
   -->
 </manifest>

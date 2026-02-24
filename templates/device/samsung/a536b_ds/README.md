@@ -8,24 +8,24 @@ Reference identifiers:
 
 ## Current status
 
-- Suitable as a bring-up starting point
-- Not production-ready
-- Contains placeholders that must be replaced with stock firmware-derived values
+- Suitable as a bring-up starting point with stock-backed board/kernel defaults
+- Not production-ready yet (still requires full extract + device testing)
+- Aligned to recent public Exynos 1280 bring-up trees for SM-A536B
 
 ## Must-do bring-up tasks
 
-1. Replace `TARGET_BOARD_PLATFORM` in `BoardConfig.mk`
-2. Update partition sizes and dynamic partition layout
-3. Add a real kernel source/config or prebuilt kernel workflow
-4. Populate
-   `vendor/samsung/a536b_ds/proprietary-files.txt` and extract blobs
-5. Add SELinux policy, audio/camera/display/radio HAL configuration, and fstab
-6. Confirm modem/radio and camera sub-variant details from stock firmware
-7. Integrate stock camera app + processing candidates:
+1. Sync companion trees in local manifests:
+   - `device/samsung/s5e8825-common`
+   - `vendor/samsung/a53x`
+   - `vendor/samsung/s5e8825-common`
+   - `kernel/samsung/s5e8825`
+2. Run extract + setup scripts to generate vendor makefiles from stock firmware
+3. Verify modem/radio and camera sub-variant details for your exact CSC
+4. Integrate stock camera app + processing candidates:
    `scripts/camera/integrate_samsung_camera.sh /path/to/aosp/tree /path/to/stock_dump`
-8. Pass source-tree readiness gate:
+5. Pass source-tree readiness gate:
    `scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree`
-9. Pass on-device acceptance suite after flashing:
+6. Pass on-device acceptance suite after flashing:
    `scripts/qa/run_device_acceptance_suite.sh`
 
 ## Secure release guidance

@@ -103,7 +103,7 @@ if [[ -f "${BLOB_FILE}" ]]; then
 
   check_blob_group "telephony/radio stack" "(radio|ril|ims|qcril|telephony)"
   check_blob_group "5G/modem support" "(nr|5g|modem)"
-  check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa)"
+  check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa|uicc)"
   check_blob_group "camera stack" "(camera|camx|mmcamera)"
   check_blob_group "camera processing stack" "(arcsoft|bokeh|hdr|eis|ois|depth|chi|ais)"
   check_blob_group "camera app package blobs" "(samsung.*camera|sec.*camera|com\.sec\.android\.app\.camera)"
