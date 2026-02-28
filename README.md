@@ -13,6 +13,10 @@ of the newest AOSP release branch.
   - `device/samsung/a536b_ds`
   - `vendor/samsung/a536b_ds`
   - Includes `aosp_a536b_ds` lunch target (SKU: `SM-A536B/DS`)
+- Samsung Galaxy S7 (`SM-G930F`) **dedicated** starter skeleton:
+  - `device/samsung/g930f`
+  - `vendor/samsung/g930f`
+  - Includes `aosp_g930f` lunch target (SKU: `SM-G930F`)
 - Security baseline tooling:
   - `vendor/rom/config/security_hardening.mk`
   - `vendor/rom/config/optimization.mk`
@@ -69,6 +73,14 @@ of the newest AOSP release branch.
    m -j$(nproc)
    ```
 
+   Alternative S7 target:
+
+   ```bash
+   source build/envsetup.sh
+   lunch aosp_g930f-user
+   m -j$(nproc)
+   ```
+
    For bring-up debugging only:
 
    ```bash
@@ -96,6 +108,8 @@ of the newest AOSP release branch.
   matching proprietary camera processing stack from stock firmware.
 - DSU sideload testing requires dynamic partitions, enough `/data` free space,
   and usually an unlocked bootloader for non-OEM signed images.
+- Galaxy S7 (SM-G930F) is a legacy pre-dynamic-partition platform; DSU flows
+  generally do not apply there.
 
 ## Security update workflow
 
@@ -168,10 +182,27 @@ After bootstrap, run these commands from your AOSP tree root.
    bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
    ```
 
+   Legacy S7 profile:
+
+   ```bash
+   DEVICE_PATH=device/samsung/g930f \
+   VENDOR_PATH=vendor/samsung/g930f \
+   REQUIRE_5G_SUPPORT=0 \
+   REQUIRE_DSU_SUPPORT=0 \
+   AUTO_FETCH_STOCK_CAMERA_APP=1 \
+   bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+   ```
+
 8. Run real-device acceptance checks after flashing:
 
    ```bash
    bash scripts/qa/run_device_acceptance_suite.sh
+   ```
+
+   Legacy S7 profile:
+
+   ```bash
+   REQUIRE_5G_SUPPORT=0 bash scripts/qa/run_device_acceptance_suite.sh
    ```
 
 9. Build DSU sideload artifacts (system.raw.gz + optional dsu.zip):
@@ -197,6 +228,9 @@ After bootstrap, run these commands from your AOSP tree root.
      "${SYSTEM_RAW_SIZE}"
    ```
 
+   Note: DSU path is for dynamic-partition devices (for example A536B/DS), not
+   legacy S7 hardware.
+
 12. Bootstrap stock camera app + candidate processing blobs:
 
    ```bash
@@ -207,6 +241,9 @@ After bootstrap, run these commands from your AOSP tree root.
 
    ```bash
    bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
+   # S7 profile:
+   VENDOR_PATH=vendor/samsung/g930f DEVICE_PROFILE=g930f \
+   bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
    ```
 
 ## Android version baseline
@@ -216,6 +253,8 @@ After bootstrap, run these commands from your AOSP tree root.
 - Current SM-A536B/DS template data (device/vendor references and fingerprints)
   is aligned to recent Samsung stock firmware families used in active
   `lineage-23.0` bring-up trees.
+- Current SM-G930F template data is aligned to stable public `lineage-18.1`
+  herolte/universal8890 trees (legacy platform constraints apply).
 
 ## Built-in connection firewall app
 

@@ -73,6 +73,10 @@ echo "Copying dedicated Samsung Galaxy A53 5G (SM-A536B/DS) skeleton..."
 copy_template_dir "${REPO_ROOT}/templates/device/samsung/a536b_ds" "device/samsung/a536b_ds"
 copy_template_dir "${REPO_ROOT}/templates/vendor/samsung/a536b_ds" "vendor/samsung/a536b_ds"
 
+echo "Copying dedicated Samsung Galaxy S7 (SM-G930F) skeleton..."
+copy_template_dir "${REPO_ROOT}/templates/device/samsung/g930f" "device/samsung/g930f"
+copy_template_dir "${REPO_ROOT}/templates/vendor/samsung/g930f" "vendor/samsung/g930f"
+
 echo "Copying built-in security firewall app..."
 copy_template_dir "${REPO_ROOT}/templates/packages/apps/SecureConnectionGuard" "packages/apps/SecureConnectionGuard"
 
@@ -138,6 +142,9 @@ Next steps:
      lunch aosp_a536b_ds-user
      m -j\$(nproc)
      # SecureConnectionGuard and AdGuardControl apps are built into this product.
+     # Alternative target for Galaxy S7 (SM-G930F):
+     # lunch aosp_g930f-user
+     # m -j\$(nproc)
   4) Verify release security baseline:
      bash scripts/security/verify_release_security.sh \
        out/target/product/a536b_ds
@@ -158,12 +165,22 @@ Next steps:
        /path/to/kernel/.config
   8) Validate source-tree feature readiness before release:
      AUTO_FETCH_STOCK_CAMERA_APP=1 bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
+     # Legacy Galaxy S7 profile:
+     # DEVICE_PATH=device/samsung/g930f \
+     # VENDOR_PATH=vendor/samsung/g930f \
+     # REQUIRE_5G_SUPPORT=0 \
+     # REQUIRE_DSU_SUPPORT=0 \
+     # AUTO_FETCH_STOCK_CAMERA_APP=1 \
+     # bash scripts/qa/validate_feature_readiness.sh "$(pwd)"
   9) Run on-device acceptance checks (after flashing build):
      bash scripts/qa/run_device_acceptance_suite.sh
+     # Legacy Galaxy S7 profile:
+     # REQUIRE_5G_SUPPORT=0 bash scripts/qa/run_device_acceptance_suite.sh
   10) Build DSU sideload artifacts from your compiled images:
       bash scripts/dsu/build_dsu_sideload_artifacts.sh \
         "$(pwd)" \
         out/target/product/a536b_ds
+      # DSU is for dynamic-partition devices (for example A536B/DS), not legacy S7.
   11) Check connected device DSU prerequisites:
       bash scripts/dsu/check_device_dsu_prereqs.sh
   12) Launch DSU sideload install from host (non-root adb flow):
@@ -173,6 +190,9 @@ Next steps:
         "\${SYSTEM_RAW_SIZE}"
   13) Fetch verified Samsung stock camera prebuilt (for strict readiness):
       bash scripts/camera/fetch_samsung_camera_prebuilt.sh "$(pwd)"
+      # Galaxy S7 profile:
+      # VENDOR_PATH=vendor/samsung/g930f DEVICE_PROFILE=g930f \
+      # bash scripts/camera/fetch_samsung_camera_prebuilt.sh "$(pwd)"
   14) Bootstrap stock camera parity path (optional but recommended):
       bash scripts/camera/integrate_samsung_camera.sh "$(pwd)" /path/to/stock_dump
 

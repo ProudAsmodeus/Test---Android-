@@ -7,15 +7,16 @@ VENDOR_PATH="${VENDOR_PATH:-vendor/samsung/a536b_ds}"
 MIN_BLOB_LINES="${MIN_BLOB_LINES:-80}"
 REQUIRE_STOCK_CAMERA_APP="${REQUIRE_STOCK_CAMERA_APP:-1}"
 REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
+REQUIRE_5G_SUPPORT="${REQUIRE_5G_SUPPORT:-1}"
 AUTO_FETCH_STOCK_CAMERA_APP="${AUTO_FETCH_STOCK_CAMERA_APP:-0}"
-REQUIRE_DSU_SUPPORT="${REQUIRE_DSU_SUPPORT:-1}"
+REQUIRE_DSU_SUPPORT="${REQUIRE_DSU_SUPPORT:-auto}"
 
 DEVICE_DIR="${AOSP_ROOT}/${DEVICE_PATH}"
 VENDOR_DIR="${AOSP_ROOT}/${VENDOR_PATH}"
 BOARD_CONFIG="${DEVICE_DIR}/BoardConfig.mk"
 DEVICE_MK="${DEVICE_DIR}/device.mk"
 SYSTEM_PROP="${DEVICE_DIR}/system.prop"
-INIT_RC="${DEVICE_DIR}/init/init.a536b_ds.rc"
+INIT_RC=""
 BLOB_FILE="${VENDOR_DIR}/proprietary-files.txt"
 CAMERA_VENDOR_MK="${VENDOR_DIR}/camera/camera-vendor.mk"
 CAMERA_PREBUILT_DIR="${VENDOR_DIR}/camera/prebuilt"
@@ -71,6 +72,8 @@ check_blob_group() {
 find_stock_camera_apk() {
   local candidate
   for candidate in \
+    "${CAMERA_PREBUILT_DIR}/SamsungCamera7.apk" \
+    "${CAMERA_PREBUILT_DIR}/SamsungCamera6.apk" \
     "${CAMERA_PREBUILT_DIR}/SamsungCamera.apk" \
     "${CAMERA_PREBUILT_DIR}/SecCamera.apk" \
     "${CAMERA_PREBUILT_DIR}/com.sec.android.app.camera.apk"; do
@@ -91,7 +94,19 @@ echo
 require_file "${BOARD_CONFIG}" "BoardConfig"
 require_file "${DEVICE_MK}" "device.mk"
 require_file "${SYSTEM_PROP}" "system.prop"
-require_file "${INIT_RC}" "init rc"
+
+for candidate in "${DEVICE_DIR}"/init/init*.rc; do
+  if [[ -f "${candidate}" ]]; then
+    INIT_RC="${candidate}"
+    break
+  fi
+done
+if [[ -n "${INIT_RC}" ]]; then
+  pass "init rc present (${INIT_RC})"
+else
+  fail "init rc missing (${DEVICE_DIR}/init/init*.rc)"
+fi
+
 require_file "${BLOB_FILE}" "proprietary-files"
 require_file "${CAMERA_VENDOR_MK}" "camera-vendor.mk"
 
@@ -109,7 +124,21 @@ if [[ -f "${DEVICE_MK}" ]]; then
   fi
 fi
 
-if [[ "${REQUIRE_DSU_SUPPORT}" == "1" ]]; then
+require_dsu_effective=0
+if [[ "${REQUIRE_DSU_SUPPORT}" == "1" || "${REQUIRE_DSU_SUPPORT}" == "0" ]]; then
+  require_dsu_effective="${REQUIRE_DSU_SUPPORT}"
+elif [[ "${REQUIRE_DSU_SUPPORT}" == "auto" ]]; then
+  if rg -n "BOARD_SUPER_PARTITION_SIZE|BOARD_SUPER_PARTITION_GROUPS|BOARD_(SAMSUNG_)?DYNAMIC_PARTITIONS" "${BOARD_CONFIG}" >/dev/null 2>&1 \
+    && rg -n "BOARD_USES_METADATA_PARTITION[[:space:]]*:=[[:space:]]*true" "${BOARD_CONFIG}" >/dev/null 2>&1; then
+    require_dsu_effective=1
+  else
+    require_dsu_effective=0
+  fi
+else
+  fail "invalid REQUIRE_DSU_SUPPORT value '${REQUIRE_DSU_SUPPORT}' (expected auto|0|1)"
+fi
+
+if [[ "${require_dsu_effective}" == "1" ]]; then
   if rg -n "developer_gsi_keys\.mk" "${DEVICE_MK}" >/dev/null 2>&1; then
     pass "device.mk includes developer_gsi_keys for DSU verification"
   else
@@ -133,7 +162,7 @@ if [[ "${REQUIRE_DSU_SUPPORT}" == "1" ]]; then
   require_file "${DSU_LAUNCH_SCRIPT}" "DSU sideload launcher script"
   require_file "${DSU_PREFLIGHT_SCRIPT}" "DSU preflight checker script"
 else
-  echo "INFO: DSU support check skipped (REQUIRE_DSU_SUPPORT=0)"
+  echo "INFO: DSU support check skipped (REQUIRE_DSU_SUPPORT=${REQUIRE_DSU_SUPPORT}, effective=${require_dsu_effective})"
 fi
 
 check_no_placeholders "${BOARD_CONFIG}" "BoardConfig"
@@ -149,7 +178,11 @@ if [[ -f "${BLOB_FILE}" ]]; then
   fi
 
   check_blob_group "telephony/radio stack" "(radio|ril|ims|qcril|telephony)"
-  check_blob_group "5G/modem support" "(nr|5g|modem)"
+  if [[ "${REQUIRE_5G_SUPPORT}" == "1" ]]; then
+    check_blob_group "5G/modem support" "(nr|5g|modem)"
+  else
+    check_blob_group "legacy cellular/modem support" "(lte|modem|radio|ril)"
+  fi
   if [[ "${REQUIRE_ESIM_SUPPORT}" == "1" ]]; then
     check_blob_group "eSIM/eUICC support" "(euicc|esim|lpa|uicc)"
   else
@@ -169,7 +202,7 @@ if [[ "${REQUIRE_STOCK_CAMERA_APP}" == "1" ]]; then
     fetch_script="${AOSP_ROOT}/scripts/camera/fetch_samsung_camera_prebuilt.sh"
     if [[ -f "${fetch_script}" ]]; then
       echo "INFO: stock camera APK missing; attempting auto-fetch via ${fetch_script}"
-      if bash "${fetch_script}" "${AOSP_ROOT}"; then
+      if VENDOR_PATH="${VENDOR_PATH}" bash "${fetch_script}" "${AOSP_ROOT}"; then
         camera_apk="$(find_stock_camera_apk || true)"
       fi
     else

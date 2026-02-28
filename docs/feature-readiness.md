@@ -75,6 +75,13 @@ REQUIRE_ESIM_SUPPORT=1 bash scripts/qa/validate_feature_readiness.sh /path/to/ao
 REQUIRE_ESIM_SUPPORT=1 bash scripts/qa/run_device_acceptance_suite.sh
 ```
 
+For legacy LTE-only targets, disable strict 5G assertions in acceptance checks:
+
+```bash
+REQUIRE_5G_SUPPORT=0 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
+REQUIRE_5G_SUPPORT=0 bash scripts/qa/run_device_acceptance_suite.sh
+```
+
 ## 3) Smooth/optimized/clean defaults
 
 `vendor/rom/config/optimization.mk` provides baseline performance defaults and
@@ -112,4 +119,10 @@ source out/dist/dsu/dsu-artifacts.env
 bash scripts/dsu/run_dsu_sideload.sh \
   "${SYSTEM_RAW_GZ_PATH}" \
   "${SYSTEM_RAW_SIZE}"
+```
+
+Legacy pre-dynamic-partition devices should skip DSU checks:
+
+```bash
+REQUIRE_DSU_SUPPORT=0 bash scripts/qa/validate_feature_readiness.sh /path/to/aosp/tree
 ```

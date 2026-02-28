@@ -3,6 +3,9 @@
 This project includes host-side helpers to test builds through Android Dynamic
 System Updates (DSU) without flashing permanent partitions.
 
+> Legacy devices such as Galaxy S7 (SM-G930F / herolte) are pre-dynamic-
+> partition platforms and typically do **not** support DSU workflows.
+
 ## 1) Prerequisites
 
 - Built images exist under `out/target/product/a536b_ds/`

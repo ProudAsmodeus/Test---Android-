@@ -7,6 +7,7 @@ TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 REPORT_FILE="${REPORT_DIR}/device-acceptance-${TIMESTAMP}.log"
 REQUIRE_STOCK_CAMERA_PACKAGE="${REQUIRE_STOCK_CAMERA_PACKAGE:-1}"
 REQUIRE_ESIM_SUPPORT="${REQUIRE_ESIM_SUPPORT:-0}"
+REQUIRE_5G_SUPPORT="${REQUIRE_5G_SUPPORT:-1}"
 failures=0
 
 if ! command -v adb >/dev/null 2>&1; then
@@ -80,7 +81,11 @@ if [[ "${REQUIRE_STOCK_CAMERA_PACKAGE}" == "1" ]]; then
 else
   log "INFO: stock camera package check skipped (REQUIRE_STOCK_CAMERA_PACKAGE=0)"
 fi
-run_shell_check "5G indicators in telephony registry" "dumpsys telephony.registry" "(nrState|NETWORK_TYPE_NR|5g)"
+if [[ "${REQUIRE_5G_SUPPORT}" == "1" ]]; then
+  run_shell_check "5G indicators in telephony registry" "dumpsys telephony.registry" "(nrState|NETWORK_TYPE_NR|5g)"
+else
+  run_shell_check "Cellular data state visibility" "dumpsys telephony.registry" "(dataRegState|NETWORK_TYPE_LTE|mDataConnectionState)"
+fi
 run_shell_check "IMS/RCS stack visibility" "service list" "(ims|rcs)"
 run_shell_check "SIM subscription visibility" "dumpsys isub" "(SubInfo|Subscription)"
 
@@ -91,7 +96,11 @@ log "  [ ] Receive incoming call"
 log "  [ ] Send SMS"
 log "  [ ] Receive SMS"
 log "  [ ] Confirm mobile data attach"
-log "  [ ] Confirm 5G NSA/SA registration in normal usage area"
+if [[ "${REQUIRE_5G_SUPPORT}" == "1" ]]; then
+  log "  [ ] Confirm 5G NSA/SA registration in normal usage area"
+else
+  log "  [ ] Confirm LTE/4G registration in normal usage area"
+fi
 if [[ "${REQUIRE_ESIM_SUPPORT}" == "1" ]]; then
   log "  [ ] Download/enable eSIM profile"
 fi

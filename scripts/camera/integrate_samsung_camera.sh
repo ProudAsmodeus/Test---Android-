@@ -7,7 +7,7 @@ VENDOR_PATH="${VENDOR_PATH:-vendor/samsung/a536b_ds}"
 
 if [[ -z "${STOCK_DUMP}" ]]; then
   echo "Usage: $0 <aosp_root> <stock_dump_dir>"
-  echo "Example: $0 ~/android/rom ~/dumps/a536b_ds_stock"
+  echo "Example: $0 ~/android/rom ~/dumps/samsung_stock"
   exit 1
 fi
 
@@ -42,7 +42,13 @@ def score_apk(path: pathlib.Path) -> int:
     p = str(path).lower()
     name = path.name.lower()
     score = 0
-    if name in ("seccamera.apk", "samsungcamera.apk", "com.sec.android.app.camera.apk"):
+    if name in (
+        "samsungcamera7.apk",
+        "samsungcamera6.apk",
+        "seccamera.apk",
+        "samsungcamera.apk",
+        "com.sec.android.app.camera.apk",
+    ):
         score += 1000
     if "samsung" in p or "sec" in p or "oneui" in p:
         score += 200
@@ -98,7 +104,7 @@ if blob_file.exists():
             existing_set.add(stripped)
 else:
     existing_lines = [
-        "# Samsung Galaxy A53 5G (SM-A536B/DS) proprietary blobs",
+        "# Samsung proprietary blobs",
         "#",
         "# Auto-generated additions can be appended below.",
     ]

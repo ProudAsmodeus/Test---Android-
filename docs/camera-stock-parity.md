@@ -15,6 +15,9 @@ camera prebuilt for strict readiness checks:
 
 ```bash
 bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
+# Galaxy S7 (SM-G930F) profile:
+VENDOR_PATH=vendor/samsung/g930f DEVICE_PROFILE=g930f \
+bash scripts/camera/fetch_samsung_camera_prebuilt.sh /path/to/aosp/tree
 ```
 
 This script:
