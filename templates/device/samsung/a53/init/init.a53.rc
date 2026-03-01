@@ -1,0 +1,5 @@
+# Placeholder init configuration for Samsung Galaxy A53 5G.
+# Add hardware-specific services and permissions as bring-up progresses.
+
+on early-boot
+    setprop ro.a53.bringup 1

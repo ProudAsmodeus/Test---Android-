@@ -1,0 +1,26 @@
+# Samsung Galaxy A53 5G (SM-A536B/DS) device properties
+ro.product.vendor.brand=samsung
+ro.product.vendor.device=a536b_ds
+ro.product.vendor.model=Samsung Galaxy A53 5G (SM-A536B/DS)
+ro.vendor.device.sku=SM-A536B/DS
+ro.vendor.rom.variant=DUAL_SIM
+ro.soc.manufacturer=Samsung
+ro.soc.model=Exynos 1280
+
+# Radio/telephony
+ro.carrier=unknown
+ro.radio.noril=no
+vendor.rild.libpath=/vendor/lib64/libsec-ril.so
+vendor.sec.rild.libpath=/vendor/lib64/libsec-ril.so
+
+# Graphics/display
+ro.hardware.egl=mali
+ro.hardware.vulkan=mali
+ro.opengles.version=196610
+ro.surface_flinger.has_HDR_display=true
+ro.surface_flinger.has_wide_color_display=true
+ro.surface_flinger.use_color_management=true
+
+# Bluetooth/Wi-Fi defaults
+bluetooth.device.default_name=Galaxy A53 5G
+wifi.direct.interface=p2p0

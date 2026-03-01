@@ -1,0 +1,7 @@
+# SM-G930F bring-up init rules.
+
+on early-boot
+    setprop ro.g930f.bringup 1
+
+on property:ro.boot.bootloader=G930F*
+    setprop ro.vendor.device.sku SM-G930F
